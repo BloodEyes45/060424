@@ -1,4 +1,4 @@
-// 💖 Kalbe tıklayınca rastgele renk değiştirme
+// 💖 Kalbe tıklayınca rastgele renk değiştir
 const heart = document.querySelector('.heart');
 
 heart.addEventListener('click', () => {

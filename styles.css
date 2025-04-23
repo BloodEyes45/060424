@@ -72,27 +72,26 @@ body {
 }
 
 /* 🕯️ Mum ışığı efekti */
-.candle-light {
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(255, 220, 150, 0.15) 0%, transparent 70%);
-  animation: flicker 2s infinite;
-  border-radius: 50%;
-  z-index: 1;
+/* ... önceki stiller ... */
+
+/* Mum ışığı efekti */
+@keyframes candleGlow {
+  0% { background-color: rgba(255, 140, 0, 0.05); }
+  50% { background-color: rgba(255, 180, 50, 0.09); }
+  100% { background-color: rgba(255, 140, 0, 0.05); }
+}
+
+.candle-effect {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  animation: candleGlow 4s ease-in-out infinite;
   pointer-events: none;
 }
 
-@keyframes flicker {
-  0% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
-  25% { opacity: 0.4; transform: translate(-50%, -50%) scale(1.05); }
-  50% { opacity: 0.25; transform: translate(-50%, -50%) scale(1); }
-  75% { opacity: 0.35; transform: translate(-50%, -50%) scale(1.1); }
-  100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
-}
 
 /* 📱 Mobil uyum */
 @media (max-width: 768px) {

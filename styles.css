@@ -1,4 +1,4 @@
-/* 🎨 Temel stil */
+/* 🌌 Temel stil */
 body {
   margin: 0;
   padding: 0;
@@ -10,14 +10,16 @@ body {
   align-items: center;
   height: 100vh;
   overflow: hidden;
+  position: relative;
 }
 
 .container {
   text-align: center;
+  z-index: 2;
   position: relative;
 }
 
-/* 💖 Animasyonlu Kalp */
+/* 💖 Kalp */
 .heart {
   width: 100px;
   height: 100px;
@@ -29,7 +31,7 @@ body {
   transition: background-color 0.3s ease;
 }
 
-/* 💓 Animasyon */
+/* ❤️ Kalp animasyonu */
 @keyframes heartPulse {
   0% {
     transform: scale(1);
@@ -47,6 +49,29 @@ body {
   font-weight: bold;
 }
 
+/* 🕯️ Mum ışığı efekti */
+.candle-light {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 220, 150, 0.15) 0%, transparent 70%);
+  animation: flicker 2s infinite;
+  border-radius: 50%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+  25% { opacity: 0.4; transform: translate(-50%, -50%) scale(1.05); }
+  50% { opacity: 0.25; transform: translate(-50%, -50%) scale(1); }
+  75% { opacity: 0.35; transform: translate(-50%, -50%) scale(1.1); }
+  100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+}
+
 /* 📱 Mobil uyum */
 @media (max-width: 768px) {
   .heart {
@@ -56,6 +81,11 @@ body {
 
   .message {
     font-size: 1.5rem;
+  }
+
+  .candle-light {
+    width: 200px;
+    height: 200px;
   }
 }
 
@@ -67,5 +97,10 @@ body {
 
   .message {
     font-size: 1.2rem;
+  }
+
+  .candle-light {
+    width: 150px;
+    height: 150px;
   }
 }

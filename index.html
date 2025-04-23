@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -7,9 +8,13 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="stars"></div>
     <div class="container">
-        <h1>İyi Geceler Sevgilim!</h1>
+        <h1 id="typewriter">İyi Geceler Sevgilim!</h1>
         <p>Umarım rüyan en az benim kadar güzel olur. 🌙</p>
+        <p>Bir mesaj bırakmak ister misin?</p>
+        <textarea id="message-box" placeholder="Mesajını buraya yaz..."></textarea>
+        <button onclick="sendMessage()">Gönder</button>
     </div>
 
     <script src="script.js"></script>

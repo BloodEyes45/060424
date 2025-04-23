@@ -72,43 +72,29 @@ body {
 }
 
 /* 🕯️ Mum ışığı efekti */
-/* ... önceki stiller ... */
-
-/* Mum ışığı efekti */
-@keyframes candleGlow {
-  0% { background-color: rgba(255, 140, 0, 0.05); }
-  50% { background-color: rgba(255, 180, 50, 0.09); }
-  100% { background-color: rgba(255, 140, 0, 0.05); }
-}
-
-.candle-effect {
+.mum-isigi {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  animation: candleGlow 4s ease-in-out infinite;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 200, 150, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+  animation: glow 4s ease-in-out infinite;
   pointer-events: none;
+  z-index: -1;
 }
 
-
-/* 📱 Mobil uyum */
-@media (max-width: 768px) {
-  .heart {
-    width: 80px;
-    height: 80px;
+@keyframes glow {
+  0%, 100% {
+    opacity: 0.2;
   }
-
-  .message {
-    font-size: 1.5rem;
-  }
-
-  .candle-light {
-    width: 200px;
-    height: 200px;
+  50% {
+    opacity: 0.5;
   }
 }
+
 
 @media (max-width: 480px) {
   .heart {

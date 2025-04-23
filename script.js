@@ -16,13 +16,3 @@ function typeWriter() {
 }
 
 window.onload = typeWriter;
-
-// Ziyaretçi mesaj kutusu
-function sendMessage() {
-    let message = document.getElementById('message-box').value;
-    if (message) {
-        alert("Mesajın gönderildi: " + message);
-    } else {
-        alert("Lütfen bir mesaj yazın.");
-    }
-}

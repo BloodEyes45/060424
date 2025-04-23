@@ -10,19 +10,105 @@ body {
     background: #2c3e50;
     color: white;
     text-align: center;
+    overflow: hidden;
+    position: relative;
 }
 
 .container {
     background: rgba(0, 0, 0, 0.6);
     padding: 30px;
     border-radius: 15px;
+    position: relative;
+    z-index: 2;
+    width: 90%; /* Esnek genişlik */
+    max-width: 600px; /* Maksimum genişlik */
 }
 
 h1 {
-    font-size: 3rem;
+    font-size: 2.5rem;
     margin-bottom: 20px;
 }
 
 p {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+}
+
+textarea {
+    margin-top: 20px;
+    padding: 10px;
+    width: 100%; /* Tam genişlik */
+    font-size: 1rem;
+    border-radius: 10px;
+    border: none;
+}
+
+button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    background: #e74c3c;
+    color: white;
+    border-radius: 5px;
+}
+
+button:hover {
+    background: #c0392b;
+}
+
+.stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://cdn.pixabay.com/photo/2015/09/18/18/52/sky-944246_960_720.jpg') repeat;
+    animation: stars-animation 100s linear infinite;
+    z-index: 1;
+}
+
+@keyframes stars-animation {
+    0% { background-position: 0 0; }
+    100% { background-position: 10000px 10000px; }
+}
+
+/* Mobile Uyumluluk için Media Queries */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem; /* Mobilde başlık boyutunu küçültüyoruz */
+    }
+
+    p {
+        font-size: 1rem; /* Mobilde paragraf boyutunu küçültüyoruz */
+    }
+
+    textarea {
+        font-size: 0.9rem; /* Mesaj kutusunun fontunu küçültüyoruz */
+    }
+
+    button {
+        font-size: 0.9rem; /* Butonun fontunu küçültüyoruz */
+        padding: 8px 15px;
+    }
+}
+
+/* Daha Küçük Ekranlar İçin (Örneğin, Telefonlar) */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5rem; /* Daha küçük başlık */
+    }
+
+    p {
+        font-size: 0.9rem; /* Daha küçük paragraf */
+    }
+
+    textarea {
+        font-size: 0.8rem; /* Mesaj kutusunun fontunu daha da küçültüyoruz */
+    }
+
+    button {
+        font-size: 0.8rem; /* Buton fontunu da küçültüyoruz */
+        padding: 6px 12px;
+    }
 }

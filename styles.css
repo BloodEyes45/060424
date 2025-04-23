@@ -21,14 +21,36 @@ body {
 
 /* 💖 Kalp */
 .heart {
+  position: relative;
   width: 100px;
-  height: 100px;
-  background-color: red;
-  clip-path: polygon(50% 0%, 0% 35%, 50% 100%, 100% 35%);
+  height: 90px;
+  background: red;
+  transform: rotate(-45deg);
   animation: heartPulse 1.5s infinite alternate;
   box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
   margin: 0 auto 20px;
-  transition: background-color 0.3s ease;
+}
+
+.heart::before,
+.heart::after {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 90px;
+  background: red;
+  border-radius: 50%;
+}
+
+.heart::before {
+  top: -50px;
+  left: 0;
+}
+
+.heart::after {
+  left: 50px;
+  top: 0;
+}
+
 }
 
 /* ❤️ Kalp animasyonu */

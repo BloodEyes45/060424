@@ -1,4 +1,4 @@
-const startDate = new Date("2025-05-02");
+const startDate = new Date("2025-05-01");
 const today = new Date();
 const diffTime = today - startDate;
 const dayNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;

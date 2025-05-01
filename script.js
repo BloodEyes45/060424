@@ -46,6 +46,7 @@ function loadMotivation() {
   document.getElementById("motivationQuote").textContent = quote;
 }
 
+// Günlük görevleri ve motivasyonu yükleyelim
 loadList("workoutList", dailyWorkouts);
 loadList("nutritionList", dailyNutrition);
 loadMotivation();

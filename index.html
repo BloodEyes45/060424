@@ -2,22 +2,24 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yaza Hazırlık</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LOL Rastgele Karakter Seçici</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Yaza Hazırlık - Gün <span id="dayNumber">1</span></h1>
-    <p id="currentDate"></p>
+  <h1>🎮 LOL Rastgele Karakter Seçici</h1>
+  
+  <div class="buttons">
+    <button onclick="getRandomChampion('top')">Üst (Top)</button>
+    <button onclick="getRandomChampion('jungle')">Orman (Jungle)</button>
+    <button onclick="getRandomChampion('mid')">Orta (Mid)</button>
+    <button onclick="getRandomChampion('adc')">Alt (ADC)</button>
+    <button onclick="getRandomChampion('support')">Destek (Support)</button>
+    <button onclick="getRandomChampion('all')">Tüm Roller</button>
+  </div>
 
-    <h2>🏋️ Antrenman Görevleri</h2>
-    <ul id="workoutList"></ul>
-
-    <h2>🍽️ Beslenme Görevleri</h2>
-    <ul id="nutritionList"></ul>
-
-    <p class="motivation" id="motivationQuote">Motivasyon yükleniyor...</p>
+  <div id="result">
+    <h2>Karakter: <span id="championName">Henüz Seçilmedi</span></h2>
   </div>
 
   <script src="script.js"></script>

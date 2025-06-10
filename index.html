@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Özür Dilerim ❤️</title>
+    <title>Beni Affeder misin? ❤️</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
@@ -30,7 +30,7 @@
             </button>
         </div>
 
-        <div id="celebration" class="celebration hidden">
+        <div id="celebration" class="celebration">
             <h2>Teşekkür Ederim!</h2>
             <p>Seni çok seviyorum!</p>
             <div class="hearts"></div>
@@ -80,8 +80,7 @@
 
             // Evet butonuna tıklandığında
             yesBtn.addEventListener('click', function() {
-                celebration.style.display = 'flex';
-                celebration.classList.remove('hidden');
+                celebration.classList.add('active');
                 
                 yesBtn.style.display = 'none';
                 noBtn.style.display = 'none';

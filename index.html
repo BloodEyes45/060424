@@ -16,7 +16,7 @@
         <h1>Beni Affeder misin?</h1>
         <p class="message">Lütfen beni affet, seni çok seviyorum ❤️</p>
         
-        <div class="photo-frame">
+        <div id="photoContainer" class="photo-frame">
             <img src="https://media.tenor.com/nisaHYy8yAYAAAAM/besito-catlove.gif" alt="Mutlu Anılar">
             <div class="photo-caption">MUCK <3</div>
         </div>
@@ -47,6 +47,9 @@
                 <p class="love-message">Seninle geçirdiğim her an çok değerli!</p>
                 <p class="love-message">Sen benim en güzel şansımsın!</p>
                 <p class="love-message">Seninle her şey daha güzel!</p>
+                <p class="love-message">Sen benim hayatımın anlamısın!</p>
+                <p class="love-message">Seninle her gün daha mutluyum!</p>
+                <p class="love-message">Sen benim en değerli varlığımsın!</p>
             </div>
         </div>
     </div>
@@ -56,6 +59,7 @@
             const yesBtn = document.getElementById('yesBtn');
             const noBtn = document.getElementById('noBtn');
             const celebration = document.getElementById('celebration');
+            const photoContainer = document.getElementById('photoContainer');
             const loveMessages = document.querySelectorAll('.love-message');
             let noBtnClicks = 0;
             let yesBtnSize = 1;
@@ -80,8 +84,13 @@
 
             // Evet butonuna tıklandığında
             yesBtn.addEventListener('click', function() {
+                // Fotoğrafı kaldır
+                photoContainer.style.display = 'none';
+                
+                // Kutlama ekranını göster
                 celebration.classList.add('active');
                 
+                // Butonları gizle
                 yesBtn.style.display = 'none';
                 noBtn.style.display = 'none';
                 
@@ -93,6 +102,9 @@
                 
                 // Aşk mesajlarını sırayla göster
                 showNextLoveMessage();
+
+                // Arka plan animasyonunu başlat
+                startBackgroundAnimation();
             });
 
             // Hayır butonuna tıklandığında
@@ -157,6 +169,11 @@
 
                 currentMessageIndex = (currentMessageIndex + 1) % loveMessages.length;
                 setTimeout(showNextLoveMessage, 3000);
+            }
+
+            // Arka plan animasyonunu başlat
+            function startBackgroundAnimation() {
+                document.body.style.animation = 'gradient 10s ease infinite';
             }
 
             // Sayfa yüklendiğinde animasyonlu giriş

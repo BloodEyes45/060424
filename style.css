@@ -7,12 +7,12 @@
 
 :root {
     --primary-color: #ff4757;
-    --secondary-color: #2ed573;
+    --secondary-color: #ff6b81;
     --text-color: #2f3542;
     --background-color: #fff;
     --shadow-color: rgba(0, 0, 0, 0.2);
     --gradient-1: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-    --gradient-2: linear-gradient(45deg, #ff4757, #ff6b6b);
+    --gradient-2: linear-gradient(45deg, #ff4757, #ff6b81);
 }
 
 body {
@@ -20,16 +20,37 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+    background: var(--gradient-1);
     perspective: 1000px;
     overflow: hidden;
+    padding: 20px;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+    animation: rotate 20s linear infinite;
+}
+
+body::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+    opacity: 0.3;
+    animation: twinkle 4s linear infinite;
 }
 
 .container {
     background: rgba(255, 255, 255, 0.95);
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 2.5rem;
+    border-radius: 30px;
+    box-shadow: 0 15px 35px var(--shadow-color);
     text-align: center;
     max-width: 90%;
     width: 500px;
@@ -37,6 +58,8 @@ body {
     transition: transform 0.3s ease;
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .container::before {
@@ -57,38 +80,88 @@ body {
 }
 
 .heart-icon {
-    font-size: 3rem;
-    color: #ff4757;
-    margin-bottom: 1rem;
+    font-size: 4rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
     animation: pulse 1.5s infinite;
-    text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+    text-shadow: 0 0 20px rgba(255, 71, 87, 0.5);
+    position: relative;
+}
+
+.heart-icon::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+    opacity: 0.3;
+    animation: pulse 2s infinite;
+    transform: translateZ(-10px);
+}
+
+.heart-icon::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+    opacity: 0.3;
+    animation: pulse 2s infinite reverse;
+    transform: translateZ(10px);
 }
 
 h1 {
-    color: #2f3542;
-    margin-bottom: 1rem;
-    font-size: 2.5rem;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    font-size: 3rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
     font-family: 'Dancing Script', cursive;
+    position: relative;
+    display: inline-block;
+}
+
+h1::before {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--primary-color), transparent);
+    animation: shimmer 2s infinite;
 }
 
 .message {
-    color: #57606f;
-    margin-bottom: 2rem;
-    font-size: 1.2rem;
+    color: var(--text-color);
+    margin-bottom: 2.5rem;
+    font-size: 1.3rem;
     line-height: 1.6;
+    position: relative;
+    padding: 1.5rem;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(5px);
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease;
+}
+
+.message:hover {
+    transform: translateZ(20px);
 }
 
 .photo-frame {
     position: relative;
-    margin: 2rem auto;
+    margin: 2.5rem auto;
     width: 100%;
-    max-width: 300px;
-    border-radius: 15px;
+    max-width: 350px;
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 25px var(--shadow-color);
     transform: translateZ(20px);
     transition: transform 0.3s ease;
+    background: white;
+    padding: 10px;
 }
 
 .photo-frame:hover {
@@ -100,6 +173,7 @@ h1 {
     height: auto;
     display: block;
     transition: transform 0.3s ease;
+    border-radius: 15px;
 }
 
 .photo-frame:hover img {
@@ -111,12 +185,13 @@ h1 {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     color: white;
-    padding: 0.5rem;
-    font-size: 1.2rem;
+    padding: 0.8rem;
+    font-size: 1.3rem;
     transform: translateY(100%);
     transition: transform 0.3s ease;
+    backdrop-filter: blur(5px);
 }
 
 .photo-frame:hover .photo-caption {
@@ -126,23 +201,35 @@ h1 {
 .buttons {
     display: flex;
     justify-content: center;
-    gap: 1rem;
-    margin-top: 2rem;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
 }
 
 .btn {
-    padding: 1rem 2rem;
+    padding: 1.2rem 2.5rem;
     border: none;
     border-radius: 50px;
     cursor: pointer;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: bold;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.8rem;
+    min-width: 140px;
+    transform-style: preserve-3d;
+}
+
+.btn i {
+    font-size: 1.3rem;
+    transition: transform 0.3s ease;
+}
+
+.btn:hover i {
+    transform: scale(1.2) translateZ(20px);
 }
 
 .btn::before {
@@ -162,25 +249,25 @@ h1 {
 }
 
 .yes-btn {
-    background: linear-gradient(45deg, #ff4757, #ff6b81);
+    background: var(--gradient-2);
     color: white;
-    box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+    box-shadow: 0 8px 20px rgba(255, 71, 87, 0.4);
 }
 
 .yes-btn:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 20px rgba(255, 71, 87, 0.6);
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 12px 25px rgba(255, 71, 87, 0.6);
 }
 
 .no-btn {
     background: linear-gradient(45deg, #747d8c, #a4b0be);
     color: white;
-    box-shadow: 0 5px 15px rgba(116, 125, 140, 0.4);
+    box-shadow: 0 8px 20px rgba(116, 125, 140, 0.4);
 }
 
 .no-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(116, 125, 140, 0.6);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(116, 125, 140, 0.6);
 }
 
 .celebration {
@@ -198,6 +285,8 @@ h1 {
     opacity: 0;
     visibility: hidden;
     transition: all 0.5s ease;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
 }
 
 .celebration.active {
@@ -206,17 +295,17 @@ h1 {
 }
 
 .celebration h2 {
-    font-size: 3rem;
-    color: #ff4757;
-    margin-bottom: 1rem;
+    font-size: 3.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
     animation: bounce 1s infinite;
 }
 
 .celebration p {
-    font-size: 1.5rem;
-    color: #2f3542;
-    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    color: var(--text-color);
+    margin-bottom: 2.5rem;
 }
 
 .hearts {
@@ -228,8 +317,8 @@ h1 {
 
 .hearts i {
     position: absolute;
-    color: #ff4757;
-    font-size: 1.5rem;
+    color: var(--primary-color);
+    font-size: 1.8rem;
     animation: float 3s infinite;
     opacity: 0;
 }
@@ -243,27 +332,31 @@ h1 {
 
 .floating-elements i {
     position: absolute;
-    color: #ff4757;
-    font-size: 2rem;
+    color: var(--primary-color);
+    font-size: 2.5rem;
     animation: float 4s infinite;
     opacity: 0.6;
 }
 
 .love-messages {
     position: relative;
-    height: 100px;
-    margin-top: 2rem;
+    height: 120px;
+    margin-top: 2.5rem;
+    width: 100%;
+    max-width: 700px;
 }
 
 .love-message {
     position: absolute;
     width: 100%;
     text-align: center;
-    font-size: 1.5rem;
-    color: #ff4757;
+    font-size: 1.8rem;
+    color: var(--primary-color);
     opacity: 0;
     transform: translateY(20px);
     transition: all 0.5s ease;
+    padding: 0 2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .love-message.active {
@@ -306,43 +399,89 @@ h1 {
     to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+@keyframes twinkle {
+    0% { opacity: 0.3; }
+    50% { opacity: 0.5; }
+    100% { opacity: 0.3; }
+}
+
 /* Mobil Uyumluluk */
 @media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+
     .container {
-        padding: 1.5rem;
+        padding: 1.8rem;
         width: 95%;
     }
 
     h1 {
-        font-size: 2rem;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
     }
 
     .message {
-        font-size: 1rem;
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        padding: 1.2rem;
     }
 
     .btn {
-        padding: 0.8rem 1.5rem;
-        font-size: 1rem;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        min-width: 120px;
+    }
+
+    .celebration {
+        padding: 1.5rem;
     }
 
     .celebration h2 {
-        font-size: 2rem;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
     }
 
     .celebration p {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
     }
 
     .love-message {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
+        padding: 0 1rem;
+    }
+
+    .photo-frame {
+        margin: 2rem auto;
+        max-width: 300px;
+    }
+
+    .photo-caption {
+        font-size: 1.1rem;
+        padding: 0.5rem;
     }
 }
 
 /* Tablet Uyumluluk */
 @media (min-width: 769px) and (max-width: 1024px) {
     .container {
-        width: 80%;
+        width: 85%;
+    }
+
+    .love-messages {
+        max-width: 600px;
     }
 }
 

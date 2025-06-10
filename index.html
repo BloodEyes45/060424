@@ -3,182 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beni Affeder misin? ❤️</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <title>Özür Diliyorum</title>
+    <link rel="stylesheet" href="styles.css">
+    <meta name="theme-color" content="#ff4757">
+    <meta name="description" content="Sevgilim için özel bir özür mesajı">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
+    <div class="floating-hearts"></div>
     <div class="container">
-        <div class="heart-icon">
-            <i class="fas fa-heart"></i>
-        </div>
-        <h1>Beni Affeder misin?</h1>
-        <p class="message">Lütfen beni affet, seni çok seviyorum ❤️</p>
-        
-        <div id="photoContainer" class="photo-frame">
-            <img src="https://media.tenor.com/nisaHYy8yAYAAAAM/besito-catlove.gif" alt="Mutlu Anılar">
-            <div class="photo-caption">MUCK <3</div>
-        </div>
-
+        <div class="heart">❤️</div>
+        <h1>Özür Diliyorum</h1>
+        <p>Sevgilim, seni üzdüğüm için çok pişmanım. Sen benim için çok değerlisin ve seni çok seviyorum. Beni affeder misin?</p>
         <div class="buttons">
-            <button type="button" id="yesBtn" class="btn yes-btn">
-                <i class="fas fa-heart"></i> Evet
-            </button>
-            <button type="button" id="noBtn" class="btn no-btn">
-                <i class="fas fa-times"></i> Hayır
-            </button>
-        </div>
-
-        <div id="celebration" class="celebration">
-            <h2>Teşekkür Ederim!</h2>
-            <p>Seni çok seviyorum!</p>
-            <div class="hearts"></div>
-            <div class="floating-elements">
-                <i class="fas fa-heart"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-heart"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-heart"></i>
-            </div>
-            <div class="love-messages">
-                <p class="love-message">Sen benim her şeyimsin!</p>
-                <p class="love-message">Seni sonsuza kadar seveceğim!</p>
-                <p class="love-message">Seninle geçirdiğim her an çok değerli!</p>
-                <p class="love-message">Sen benim en güzel şansımsın!</p>
-                <p class="love-message">Seninle her şey daha güzel!</p>
-                <p class="love-message">Sen benim hayatımın anlamısın!</p>
-                <p class="love-message">Seninle her gün daha mutluyum!</p>
-                <p class="love-message">Sen benim en değerli varlığımsın!</p>
-            </div>
+            <button id="yesBtn">Evet, Affediyorum</button>
+            <button id="noBtn">Hayır</button>
         </div>
     </div>
-
-    <script>
-        window.onload = function() {
-            const yesBtn = document.getElementById('yesBtn');
-            const noBtn = document.getElementById('noBtn');
-            const celebration = document.getElementById('celebration');
-            const photoContainer = document.getElementById('photoContainer');
-            const loveMessages = document.querySelectorAll('.love-message');
-            let noBtnClicks = 0;
-            let yesBtnSize = 1;
-            let currentMessageIndex = 0;
-            let mouseX = 0;
-            let mouseY = 0;
-
-            // Mouse pozisyonunu takip et
-            document.addEventListener('mousemove', function(e) {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-                updateParallax();
-            });
-
-            // Parallax efekti
-            function updateParallax() {
-                const container = document.querySelector('.container');
-                const x = (mouseX - window.innerWidth / 2) / 50;
-                const y = (mouseY - window.innerHeight / 2) / 50;
-                container.style.transform = `rotateX(${y}deg) rotateY(${x}deg)`;
-            }
-
-            // Evet butonuna tıklandığında
-            yesBtn.addEventListener('click', function() {
-                // Fotoğrafı kaldır
-                photoContainer.style.display = 'none';
-                
-                // Kutlama ekranını göster
-                celebration.classList.add('active');
-                
-                // Butonları gizle
-                yesBtn.style.display = 'none';
-                noBtn.style.display = 'none';
-                
-                // Kalpleri oluştur
-                createHearts();
-                
-                // Kutlama mesajını animasyonlu göster
-                animateCelebration();
-                
-                // Aşk mesajlarını sırayla göster
-                showNextLoveMessage();
-
-                // Arka plan animasyonunu başlat
-                startBackgroundAnimation();
-            });
-
-            // Hayır butonuna tıklandığında
-            noBtn.addEventListener('click', function() {
-                noBtnClicks++;
-                
-                // Evet butonunu büyüt
-                yesBtnSize += 0.2;
-                yesBtn.style.transform = `scale(${yesBtnSize})`;
-                
-                // Hayır butonunu rastgele konuma taşı
-                moveNoButton();
-                
-                // Butonun boyutunu küçült
-                noBtn.style.transform = `scale(${1 - (noBtnClicks * 0.1)})`;
-                
-                if (noBtnClicks >= 5) {
-                    noBtn.style.display = 'none';
-                }
-            });
-
-            // Kalpleri oluştur
-            function createHearts() {
-                const heartsContainer = document.querySelector('.hearts');
-                for (let i = 0; i < 50; i++) {
-                    const heart = document.createElement('i');
-                    heart.className = 'fas fa-heart';
-                    heart.style.left = Math.random() * 100 + '%';
-                    heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                    heart.style.animationDelay = Math.random() * 2 + 's';
-                    heartsContainer.appendChild(heart);
-                }
-            }
-
-            // Kutlama animasyonları
-            function animateCelebration() {
-                const h2 = celebration.querySelector('h2');
-                const p = celebration.querySelector('p');
-                h2.style.animation = 'bounce 1s infinite';
-                p.style.animation = 'fadeIn 1s ease-out';
-            }
-
-            // Hayır butonunu hareket ettir
-            function moveNoButton() {
-                const maxX = window.innerWidth - noBtn.offsetWidth;
-                const maxY = window.innerHeight - noBtn.offsetHeight;
-                
-                noBtn.style.position = 'absolute';
-                noBtn.style.left = Math.random() * maxX + 'px';
-                noBtn.style.top = Math.random() * maxY + 'px';
-            }
-
-            // Aşk mesajlarını sırayla göster
-            function showNextLoveMessage() {
-                loveMessages.forEach((message, index) => {
-                    message.classList.remove('active');
-                    if (index === currentMessageIndex) {
-                        message.classList.add('active');
-                        message.style.animation = 'fadeIn 1s ease-out';
-                    }
-                });
-
-                currentMessageIndex = (currentMessageIndex + 1) % loveMessages.length;
-                setTimeout(showNextLoveMessage, 3000);
-            }
-
-            // Arka plan animasyonunu başlat
-            function startBackgroundAnimation() {
-                document.body.style.animation = 'gradient 10s ease infinite';
-            }
-
-            // Sayfa yüklendiğinde animasyonlu giriş
-            document.querySelector('.container').style.animation = 'fadeIn 1s ease-out';
-        };
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

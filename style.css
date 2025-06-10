@@ -204,6 +204,8 @@ h1::before {
     gap: 1.5rem;
     margin-top: 2.5rem;
     flex-wrap: wrap;
+    position: relative;
+    z-index: 10;
 }
 
 .btn {
@@ -221,11 +223,19 @@ h1::before {
     gap: 0.8rem;
     min-width: 140px;
     transform-style: preserve-3d;
+    z-index: 20;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active {
+    transform: scale(0.95);
 }
 
 .btn i {
     font-size: 1.3rem;
     transition: transform 0.3s ease;
+    pointer-events: none;
 }
 
 .btn:hover i {
@@ -242,6 +252,7 @@ h1::before {
     background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
     transform: translateX(-100%);
     transition: transform 0.5s ease;
+    pointer-events: none;
 }
 
 .btn:hover::before {
@@ -442,6 +453,12 @@ h1::before {
         padding: 1rem 2rem;
         font-size: 1.1rem;
         min-width: 120px;
+        margin: 0.5rem;
+    }
+
+    .buttons {
+        gap: 1rem;
+        margin-top: 2rem;
     }
 
     .celebration {
@@ -482,6 +499,10 @@ h1::before {
 
     .love-messages {
         max-width: 600px;
+    }
+
+    .btn {
+        min-width: 130px;
     }
 }
 

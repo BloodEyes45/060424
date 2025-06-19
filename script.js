@@ -1,166 +1,186 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Loading Screen
-    const loadingScreen = document.createElement('div');
-    loadingScreen.className = 'loading-screen';
-    loadingScreen.innerHTML = '<div class="loading-heart">❤️</div>';
-    document.body.appendChild(loadingScreen);
+const forgiveBtn = document.getElementById('forgiveBtn');
+const notYetBtn = document.getElementById('notYetBtn');
+const responseDiv = document.getElementById('response');
+const extraDiv = document.getElementById('extra');
+const catFactDiv = document.getElementById('catFact');
+const surpriseArea = document.getElementById('surpriseArea');
 
-    // Hide loading screen after 2 seconds
+const catGifs = [
+    'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
+    'https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif',
+    'https://media.giphy.com/media/13borq7Zo2kulO/giphy.gif',
+    'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif',
+    'https://media.giphy.com/media/6VoDJzfRjJNbG/giphy.gif',
+    'https://media.giphy.com/media/12PA1eI8FBqEBa/giphy.gif',
+];
+
+const catFacts = [
+    "Kediler hayatlarının %70'ini uyuyarak geçirir.",
+    'Bir kedi ortalama 110-140 dereceye kadar kulaklarını döndürebilir.',
+    'Kedilerin burnu, insanlar gibi benzersizdir. Her kedinin burun izi farklıdır!',
+    'Kediler, insanlara göre 6 kat daha iyi görebilirler.',
+    'Kediler mutlu olduklarında mırlarlar.',
+    'Kedilerin kalbi dakikada 110-140 kez atar.',
+    'Kediler, sahiplerini miyavlayarak selamlar.',
+    'Kediler, insanları iyileştirici etkisiyle bilinir.',
+    "Kediler, 100'den fazla farklı ses çıkarabilir.",
+    "Kediler, 30'a kadar diş çıkarabilir.",
+];
+
+function playMeow() {
+    const audio = new Audio('https://cdn.pixabay.com/audio/2022/07/26/audio_124bfae5e2.mp3');
+    audio.play();
+}
+
+function createHeartAnim() {
+    const heart = document.createElement('div');
+    heart.className = 'flying-heart';
+    heart.innerHTML = '❤️';
+    heart.style.left = Math.random() * 80 + 10 + '%';
+    document.body.appendChild(heart);
     setTimeout(() => {
-        loadingScreen.style.opacity = '0';
-        setTimeout(() => loadingScreen.remove(), 500);
-    }, 2000);
+        heart.remove();
+    }, 2200);
+}
 
-    // Create background shapes
-    const backgroundShapes = document.createElement('div');
-    backgroundShapes.className = 'background-shapes';
-    document.body.appendChild(backgroundShapes);
+function createBalloonAnim() {
+    const balloon = document.createElement('div');
+    balloon.className = 'balloon';
+    const colors = ['#ffb6b9', '#d72660', '#f7cac9', '#ffe066', '#b5ead7', '#c7ceea'];
+    balloon.style.background = colors[Math.floor(Math.random() * colors.length)];
+    balloon.style.left = Math.random() * 80 + 10 + '%';
+    balloon.style.animationDuration = (1.8 + Math.random() * 1.5) + 's';
+    document.body.appendChild(balloon);
+    setTimeout(() => {
+        balloon.remove();
+    }, 2500);
+}
 
-    for (let i = 0; i < 5; i++) {
-        const shape = document.createElement('div');
-        shape.className = 'shape';
-        shape.style.width = Math.random() * 100 + 50 + 'px';
-        shape.style.height = shape.style.width;
-        shape.style.left = Math.random() * 100 + 'vw';
-        shape.style.top = Math.random() * 100 + 'vh';
-        shape.style.animationDelay = Math.random() * 5 + 's';
-        backgroundShapes.appendChild(shape);
+function burstHearts(count = 12) {
+    for (let i = 0; i < count; i++) {
+        setTimeout(createHeartAnim, i * 80);
     }
+}
 
-    const yesBtn = document.getElementById('yesBtn');
-    const noBtn = document.getElementById('noBtn');
-    const container = document.querySelector('.container');
-    const floatingHearts = document.querySelector('.floating-hearts');
-
-    // Create floating hearts
-    function createFloatingHearts() {
-        const heart = document.createElement('div');
-        heart.innerHTML = '❤️';
-        heart.className = 'floating-heart';
-        heart.style.left = Math.random() * 100 + 'vw';
-        floatingHearts.appendChild(heart);
-
-        // Remove heart after animation
-        heart.addEventListener('animationend', () => {
-            heart.remove();
-        });
+function burstBalloons(count = 8) {
+    for (let i = 0; i < count; i++) {
+        setTimeout(createBalloonAnim, i * 120);
     }
+}
 
-    // Create 3D rotating hearts
-    function createRotatingHearts() {
-        const heart = document.createElement('div');
-        heart.innerHTML = '❤️';
-        heart.className = 'rotating-heart';
-        heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.top = Math.random() * 100 + 'vh';
-        document.body.appendChild(heart);
+function showRandomCatGif() {
+    const gif = catGifs[Math.floor(Math.random() * catGifs.length)];
+    surpriseArea.innerHTML = `<img src="${gif}" alt="Kedi GIF" class="cat-gif">`;
+}
 
-        setTimeout(() => heart.remove(), 10000);
-    }
+function showRandomCatFact() {
+    const fact = catFacts[Math.floor(Math.random() * catFacts.length)];
+    catFactDiv.innerHTML = `<span>🐾 <b>Kedi Gerçeği:</b> ${fact}</span>`;
+}
 
-    // Create hearts periodically
-    setInterval(createFloatingHearts, 300);
-    setInterval(createRotatingHearts, 2000);
-
-    // Romantic messages
-    const messages = [
-        "Seninle geçirdiğim her an çok değerli...",
-        "Sen benim hayatımın en güzel hediyesisin...",
-        "Seninle her gün yeniden aşık oluyorum...",
-        "Sen benim en güzel şansımsın...",
-        "Seninle her şey daha güzel...",
-        "Sen benim en büyük mutluluğumsun...",
-        "Seninle her anım çok özel...",
-        "Sen benim en değerli varlığımsın..."
-    ];
-
-    let currentMessageIndex = 0;
-
-    function showNextMessage() {
-        const messageContainer = document.querySelector('.message-slider');
-        if (messageContainer) {
-            const message = document.createElement('div');
-            message.className = 'message-slide';
-            message.textContent = messages[currentMessageIndex];
-            messageContainer.appendChild(message);
-
-            // Remove old messages
-            const oldMessages = messageContainer.querySelectorAll('.message-slide');
-            if (oldMessages.length > 3) {
-                oldMessages[0].remove();
-            }
-
-            currentMessageIndex = (currentMessageIndex + 1) % messages.length;
-        }
-    }
-
-    yesBtn.addEventListener('click', () => {
-        yesBtn.style.transform = 'scale(1.5)';
-        yesBtn.style.background = '#2ed573';
-        
-        // Create success message with animation and GIF
-        container.innerHTML = `
-            <div class="success-message">
-                <div class="heart">❤️</div>
-                <h1>Teşekkür Ederim!</h1>
-                <p>Seni çok seviyorum! Seninle geçirdiğim her an için çok mutluyum.</p>
-                <p>Sen benim hayatımın en güzel hediyesisin.</p>
-                <div class="gif-container">
-                    <img src="https://media.tenor.com/nisaHYy8yAYAAAAM/besito-catlove.gif" alt="Love Cats" class="love-gif">
-                </div>
-                <div class="message-slider"></div>
-            </div>
-        `;
-
-        // Start showing messages
-        showNextMessage();
-        setInterval(showNextMessage, 3000);
-
-        // Create more hearts on success
-        for(let i = 0; i < 15; i++) {
-            setTimeout(createFloatingHearts, i * 150);
-        }
-
-        // Add confetti effect
-        createConfetti();
-    });
-
-    noBtn.addEventListener('mouseover', () => {
-        const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 100) + 50;
-        const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 100) + 50;
-        
-        noBtn.style.position = 'fixed';
-        noBtn.style.left = `${x}px`;
-        noBtn.style.top = `${y}px`;
-        noBtn.style.transition = 'all 0.3s ease';
-    });
-
-    // Add touch support for mobile
-    noBtn.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 100) + 50;
-        const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 100) + 50;
-        
-        noBtn.style.position = 'fixed';
-        noBtn.style.left = `${x}px`;
-        noBtn.style.top = `${y}px`;
-    });
-
-    // Confetti effect
-    function createConfetti() {
-        const colors = ['#ff4757', '#ff6b6b', '#ff8e8e', '#ffa5a5', '#ffc0cb'];
-        
-        for(let i = 0; i < 100; i++) {
-            const confetti = document.createElement('div');
-            confetti.className = 'confetti';
-            confetti.style.left = Math.random() * 100 + 'vw';
-            confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
-            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            document.body.appendChild(confetti);
-
-            confetti.addEventListener('animationend', () => {
-                confetti.remove();
-            });
-        }
-    }
+forgiveBtn.addEventListener('click', () => {
+    responseDiv.innerHTML = 'Seni çok seviyorum! 💖 İyi ki varsın, iyi ki benimlesin. Bundan sonra daha dikkatli olacağıma söz veriyorum!';
+    forgiveBtn.style.display = 'none';
+    notYetBtn.style.display = 'none';
+    burstHearts(18);
+    burstBalloons(10);
+    playMeow();
+    setTimeout(() => {
+        extraDiv.innerHTML = `<div class="final-msg">\n        <h2>Barıştık mı? 😻</h2>\n        <p>Seninle her şey çok daha güzel! Birlikte nice güzel anılar biriktirelim.\n        <br>Birlikte kedi sevelim, bol bol sarılalım! 💞</p>\n        <blockquote style='font-style:italic;color:#d72660;margin:12px 0 8px 0;'>\n        "Seninle her sabah uyanmak,\n        <br>Bir kedi gibi huzurla yanına sokulmak...\n        <br>İşte en büyük mutluluğum bu!"\n        </blockquote>\n        <img src='https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif' alt='Kucaklayan Kedi' style='width:90px;border-radius:50%;margin-top:12px;box-shadow:0 2px 8px #d7266040;'>\n        </div>`;
+        burstHearts(10);
+        burstBalloons(8);
+        playMeow();
+        showRandomCatGif();
+    }, 1800);
 });
+
+notYetBtn.addEventListener('click', () => {
+    const messages = [
+        'Ama ben seni çok seviyorum... Bir şans daha? 🥺',
+        'Küsmek yok, barışalım mı? 💌',
+        'Bir sarılsam geçer mi? 🤗',
+        'Birlikte daha güzeliz, affet beni! 💞',
+        'Sana çiçekler alayım mı? 🌹',
+        'Bir kahve ısmarlayayım, barışalım! ☕',
+        'Bak, kalbim senin için atıyor! 💓',
+        'Bir gülüşünü çok özledim... 😊',
+        'Kediler bile barışmamızı istiyor! 🐾',
+        'Bak, kedi de üzgün... 😿',
+    ];
+    const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+    responseDiv.innerHTML = randomMsg;
+    burstHearts(7);
+    burstBalloons(6);
+    playMeow();
+    showRandomCatFact();
+    showRandomCatGif();
+});
+
+// Sayfa açılışında rastgele kedi bilgisi ve GIF göster
+window.onload = () => {
+    showRandomCatFact();
+    showRandomCatGif();
+};
+
+// Animasyonlu kalp ve balon stilleri
+const style = document.createElement('style');
+style.innerHTML = `
+.flying-heart {
+    position: fixed;
+    bottom: 40px;
+    font-size: 2.2rem;
+    pointer-events: none;
+    animation: flyup 2.2s cubic-bezier(.68,-0.55,.27,1.55);
+    z-index: 9999;
+}
+@keyframes flyup {
+    0% { opacity: 0; transform: translateY(0) scale(0.7); }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-220px) scale(1.3) rotate(-12deg); }
+}
+.balloon {
+    position: fixed;
+    bottom: -60px;
+    width: 32px;
+    height: 44px;
+    border-radius: 16px 16px 16px 16px / 22px 22px 22px 22px;
+    z-index: 9998;
+    animation: balloonup 2.2s cubic-bezier(.68,-0.55,.27,1.55);
+    box-shadow: 0 2px 8px #d7266040;
+}
+@keyframes balloonup {
+    0% { opacity: 0; transform: translateY(0) scale(0.7); }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-320px) scale(1.1) rotate(8deg); }
+}
+.cat-gif {
+    width: 120px;
+    border-radius: 18px;
+    margin: 18px auto 0 auto;
+    display: block;
+    box-shadow: 0 2px 12px #d7266040;
+}
+.final-msg h2 {
+    color: #d72660;
+    margin-bottom: 8px;
+    font-size: 1.2rem;
+}
+.final-msg p {
+    color: #333;
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+}
+.cat-fact {
+    margin: 10px 0 18px 0;
+    font-size: 1.01rem;
+    color: #a4133c;
+    background: #fff0f6;
+    border-radius: 12px;
+    padding: 7px 12px;
+    display: inline-block;
+    box-shadow: 0 1px 4px #d7266015;
+}
+`;
+document.head.appendChild(style); 

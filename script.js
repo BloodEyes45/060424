@@ -398,9 +398,30 @@ function renderPage(idx) {
     hologramContainer.className = 'hologram-container';
     
     const img = document.createElement('img');
-    img.src = 'image.png';
     img.alt = 'Sevgilim';
     img.className = 'final-photo hologram';
+    
+    // Fotoğrafı yükle
+    img.src = 'image.png';
+    
+    // Fotoğraf yükleme hatası için
+    img.onerror = function() {
+      console.log('PNG yüklenemedi, JPG deniyor...');
+      if (this.src.includes('.png')) {
+        this.src = 'image.jpg';
+      } else {
+        console.log('Fotoğraf yüklenemedi, placeholder gösteriliyor');
+        // Güzel bir placeholder SVG
+        this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2dyYWRpZW50KSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmI2YzE7c3RvcC1vcGFjaXR5OjEiIC8+CjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2ZmNjk5YjQ7c3RvcC1vcGFjaXR5OjEiIC8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPGNpcmNsZSBjeD0iMTAwIiBjeT0iODAiIHI9IjMwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjMiLz4KPGNpcmNsZSBjeD0iNzAiIGN5PSIxMDAiIHI9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjIiLz4KPGNpcmNsZSBjeD0iMTMwIiBjeT0iMTAwIiByPSIyMCIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC4yIi8+Cjx0ZXh0IHg9IjEwMCIgeT0iMTIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuKXhDwvdGV4dD4KPC9zdmc+';
+        this.alt = 'Sevgilim (Fotoğraf yüklenemedi)';
+      }
+    };
+    
+    // Fotoğraf yüklendiğinde
+    img.onload = function() {
+      console.log('Fotoğraf başarıyla yüklendi!');
+    };
+    
     app.appendChild(hologramContainer);
     hologramContainer.appendChild(img);
     

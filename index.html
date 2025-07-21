@@ -1,16 +1,235 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Çiçek Bahçesi</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YKS Tercih Takip Sistemi</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <div id="app">
-    <!-- Dinamik içerik buraya gelecek -->
-  </div>
-  <button id="nextBtn">Sonraki</button>
-  <script src="script.js"></script>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1><i class="fas fa-graduation-cap"></i> YKS Tercih Takip</h1>
+            <div class="connection-status">
+                <span id="connectionStatus" class="status-indicator">
+                    <i class="fas fa-circle"></i> Bağlanıyor...
+                </span>
+            </div>
+            <div class="person-selector">
+                <button class="person-btn active" data-person="semih">
+                    <i class="fas fa-user"></i> Semih
+                </button>
+                <button class="person-btn" data-person="sema">
+                    <i class="fas fa-user"></i> Sema
+                </button>
+            </div>
+            <div class="add-preference-btn-container">
+                <button id="addPreferenceBtn" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Yeni Tercih Ekle
+                </button>
+            </div>
+        </header>
+
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filter-group">
+                <label for="filterScoreType">Puan Türü Filtrele:</label>
+                <select id="filterScoreType">
+                    <option value="">Tümü</option>
+                    <option value="SAY">SAY</option>
+                    <option value="SÖZ">SÖZ</option>
+                    <option value="EA">EA</option>
+                    <option value="TYT">TYT</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterPriority">Öncelik:</label>
+                <select id="filterPriority">
+                    <option value="">Tümü</option>
+                    <option value="true">Öncelikli</option>
+                    <option value="false">Normal</option>
+                </select>
+            </div>
+            <button id="clearFilters" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Filtreleri Temizle
+            </button>
+        </div>
+
+        <!-- Preferences List -->
+        <div class="preferences-container">
+            <h2>Tercihler</h2>
+            <div class="list-controls">
+                <button id="sortByRank" class="btn btn-secondary">
+                    <i class="fas fa-sort-numeric-down"></i> Sıralamaya Göre Sırala
+                </button>
+                <button id="sortByScore" class="btn btn-secondary">
+                    <i class="fas fa-sort-amount-down"></i> Puana Göre Sırala
+                </button>
+                <button id="enableDragMode" class="btn btn-primary">
+                    <i class="fas fa-grip-vertical"></i> Sürükle-Bırak Modu
+                </button>
+            </div>
+            <div id="preferencesList" class="preferences-list">
+                <!-- Preferences will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Veriler yükleniyor...</p>
+        </div>
+    </div>
+
+    <!-- Add Preference Modal -->
+    <div id="addModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Yeni Tercih Ekle</h3>
+                <button class="close-btn" onclick="closeAddModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="preferenceForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="university">Üniversite Adı</label>
+                        <input type="text" id="university" name="university" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="department">Bölüm Adı</label>
+                        <input type="text" id="department" name="department" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="score">2024 YKS Puanı</label>
+                        <input type="number" id="score" name="score" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rank">Sıralama</label>
+                        <input type="number" id="rank" name="rank" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="scoreType">Puan Türü</label>
+                        <select id="scoreType" name="scoreType" required>
+                            <option value="">Seçiniz</option>
+                            <option value="SAY">SAY</option>
+                            <option value="SÖZ">SÖZ</option>
+                            <option value="EA">EA</option>
+                            <option value="TYT">TYT</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="color">Renk</label>
+                        <input type="color" id="color" name="color" value="#4CAF50">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Notlar</label>
+                    <textarea id="notes" name="notes" rows="3" placeholder="Tercih hakkında notlarınızı yazın..."></textarea>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="priority" name="priority">
+                        <span class="checkmark"></span>
+                        Öncelikli Tercih
+                    </label>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Tercih Ekle
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Tercih Düzenle</h3>
+                <button class="close-btn" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editUniversity">Üniversite Adı</label>
+                        <input type="text" id="editUniversity" name="university" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDepartment">Bölüm Adı</label>
+                        <input type="text" id="editDepartment" name="department" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editScore">2024 YKS Puanı</label>
+                        <input type="number" id="editScore" name="score" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editRank">Sıralama</label>
+                        <input type="number" id="editRank" name="rank" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editScoreType">Puan Türü</label>
+                        <select id="editScoreType" name="scoreType" required>
+                            <option value="SAY">SAY</option>
+                            <option value="SÖZ">SÖZ</option>
+                            <option value="EA">EA</option>
+                            <option value="TYT">TYT</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editColor">Renk</label>
+                        <input type="color" id="editColor" name="color">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editNotes">Notlar</label>
+                    <textarea id="editNotes" name="notes" rows="3"></textarea>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="editPriority" name="priority">
+                        <span class="checkmark"></span>
+                        Öncelikli Tercih
+                    </label>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="deletePreference()">
+                        <i class="fas fa-trash"></i> Sil
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <script src="script.js"></script>
 </body>
 </html> 

@@ -7,9 +7,32 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+    background: linear-gradient(135deg, rgba(250, 112, 154, 0.3) 0%, rgba(254, 225, 64, 0.3) 50%, rgba(255, 154, 158, 0.3) 100%);
+    background-size: 400% 400%;
     min-height: 100vh;
     color: #333;
+    animation: gentleGradient 8s ease-in-out infinite;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    background-size: 400% 400%;
+    animation: gentleGradient 8s ease-in-out infinite;
+    filter: blur(20px) brightness(0.7);
+    z-index: -1;
+}
+
+@keyframes gentleGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .container {
@@ -20,21 +43,22 @@ body {
 
 /* Header */
 .header {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    backdrop-filter: blur(15px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%);
+    backdrop-filter: blur(20px);
     border-radius: 15px;
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .header h1 {
-    color: #ffffff;
+    color: #2d3748;
     margin-bottom: 15px;
     font-size: 1.8rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.5);
+    font-weight: 700;
 }
 
 .header h1 i {
@@ -53,10 +77,11 @@ body {
     padding: 8px 16px;
     border-radius: 20px;
     font-size: 0.9rem;
-    font-weight: 500;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.1) 100%);
+    font-weight: 600;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.2) 100%);
     backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #2d3748;
 }
 
 .status-indicator.connected {
@@ -83,20 +108,22 @@ body {
 }
 
 .person-btn {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.2) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.4);
     border-radius: 25px;
     padding: 10px 20px;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-weight: 500;
+    font-weight: 600;
     color: #2d3748;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(10px);
 }
 
 .person-btn:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.3) 100%);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
 }
 
 .person-btn.active {
@@ -118,20 +145,21 @@ body {
 
 /* Form Styles */
 .add-form {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    backdrop-filter: blur(15px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%);
+    backdrop-filter: blur(20px);
     border-radius: 15px;
     padding: 25px;
     margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .add-form h2 {
-    color: #ffffff;
+    color: #2d3748;
     margin-bottom: 20px;
     font-size: 1.5rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.5);
+    font-weight: 600;
 }
 
 .form-row {
@@ -148,9 +176,9 @@ body {
 .form-group label {
     display: block;
     margin-bottom: 5px;
-    font-weight: 500;
-    color: #ffffff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    font-weight: 600;
+    color: #2d3748;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .form-group input,
@@ -158,13 +186,14 @@ body {
 .form-group textarea {
     width: 100%;
     padding: 12px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.4);
     border-radius: 8px;
     font-size: 14px;
     transition: border-color 0.3s ease;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.3);
     color: #2d3748;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(10px);
+    font-weight: 500;
 }
 
 .form-group input:focus,
@@ -189,9 +218,9 @@ body {
     display: flex;
     align-items: center;
     cursor: pointer;
-    font-weight: 500;
-    color: #ffffff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    font-weight: 600;
+    color: #2d3748;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .checkbox-label input[type="checkbox"] {
@@ -271,17 +300,17 @@ body {
 
 /* Filters */
 .filters {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    backdrop-filter: blur(15px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%);
+    backdrop-filter: blur(20px);
     border-radius: 15px;
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
     align-items: center;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .filter-group {
@@ -291,36 +320,38 @@ body {
 }
 
 .filter-group label {
-    font-weight: 500;
-    color: #ffffff;
+    font-weight: 600;
+    color: #2d3748;
     white-space: nowrap;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .filter-group select {
     padding: 8px 12px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.4);
     border-radius: 6px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.3);
     color: #2d3748;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(10px);
+    font-weight: 500;
 }
 
 /* Preferences List */
 .preferences-container {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    backdrop-filter: blur(15px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%);
+    backdrop-filter: blur(20px);
     border-radius: 15px;
     padding: 25px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .preferences-container h2 {
-    color: #ffffff;
+    color: #2d3748;
     margin-bottom: 20px;
     font-size: 1.5rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.5);
+    font-weight: 600;
 }
 
 .list-controls {
@@ -341,13 +372,13 @@ body {
 }
 
 .preference-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.1) 100%);
-    backdrop-filter: blur(10px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.2) 100%);
+    backdrop-filter: blur(15px);
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-left: 4px solid #5a67d8;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     transition: all 0.3s ease;
     position: relative;
     cursor: default;
@@ -522,16 +553,16 @@ body {
 }
 
 .modal-content {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.1) 100%);
-    backdrop-filter: blur(20px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.25) 100%);
+    backdrop-filter: blur(25px);
     border-radius: 15px;
     padding: 25px;
     max-width: 600px;
     width: 90%;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .modal-header {

@@ -1,487 +1,575 @@
-const pages = [
-  {
-    bgGradient: ['#ff6b6b', '#ee5a24', '#ff3838'],
-    flowerType: 'magical_rose',
-    message: 'Her çiçek senin için açıyor... Dokun ve büyüyü gör! 🌹',
-    particles: 'sparkles',
-    sound: 'magic'
-  },
-  {
-    bgGradient: ['#8d5fd3', '#6c5ce7', '#a29bfe'],
-    flowerType: 'cosmic_violet',
-    message: 'Evrenin en güzel çiçekleri senin için dans ediyor! ✨',
-    particles: 'stars',
-    sound: 'cosmic'
-  },
-  {
-    bgGradient: ['#ffd60a', '#fdcb6e', '#ffeaa7'],
-    flowerType: 'sunflower_dream',
-    message: 'Güneş gibi parlayan çiçeklerle sarıldın! 🌻',
-    particles: 'sunbeams',
-    sound: 'sunshine'
-  },
-  {
-    bgGradient: ['#ff6f91', '#fd79a8', '#f8c291'],
-    flowerType: 'cherry_blossom',
-    message: 'Kiraz çiçekleri gibi zarif ve güzelsin! 🌸',
-    particles: 'petals',
-    sound: 'cherry'
-  },
-  {
-    bgGradient: ['#fff8f0', '#ffeaa7', '#fdcb6e'],
-    message: 'Ve işte en güzel çiçek: <b>SEN</b>!<br><span style="font-size:1.2em;">Senin gülüşün, tüm evrenden daha güzel... 💖</span>',
-    isFinal: true,
-    particles: 'hearts',
-    sound: 'love'
-  }
-];
+// Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyBXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    authDomain: "yks-tercih-takip.firebaseapp.com",
+    databaseURL: "https://yks-tercih-takip-default-rtdb.firebaseio.com",
+    projectId: "yks-tercih-takip",
+    storageBucket: "yks-tercih-takip.appspot.com",
+    messagingSenderId: "123456789012",
+    appId: "1:123456789012:web:abcdefghijklmnop"
+};
 
-let currentPage = 0;
-const app = document.getElementById('app');
-const nextBtn = document.getElementById('nextBtn');
-let particles = [];
-let flowers = [];
-let isAnimating = false;
-let mouseX = 0, mouseY = 0;
-let audioContext = null;
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
-// Ses sistemi başlat
-function initAudio() {
-  try {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  } catch (e) {
-    console.log('Audio not supported');
-  }
-}
+// Global Variables
+let currentPerson = 'semih';
+let currentEditingId = null;
+let preferences = {
+    semih: [],
+    sema: []
+};
+let dragMode = false;
+let draggedElement = null;
+let draggedIndex = -1;
 
-// Ses efekti çal
-function playSound(frequency, duration, type = 'sine') {
-  if (!audioContext) return;
-  
-  const oscillator = audioContext.createOscillator();
-  const gainNode = audioContext.createGain();
-  
-  oscillator.connect(gainNode);
-  gainNode.connect(audioContext.destination);
-  
-  oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-  oscillator.type = type;
-  
-  gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
-  
-  oscillator.start(audioContext.currentTime);
-  oscillator.stop(audioContext.currentTime + duration);
-}
+// DOM Elements
+const personButtons = document.querySelectorAll('.person-btn');
+const preferenceForm = document.getElementById('preferenceForm');
+const preferencesList = document.getElementById('preferencesList');
+const editModal = document.getElementById('editModal');
+const editForm = document.getElementById('editForm');
+const loading = document.getElementById('loading');
+const filterScoreType = document.getElementById('filterScoreType');
+const filterPriority = document.getElementById('filterPriority');
+const clearFiltersBtn = document.getElementById('clearFilters');
+const connectionStatus = document.getElementById('connectionStatus');
+const sortByRankBtn = document.getElementById('sortByRank');
+const sortByScoreBtn = document.getElementById('sortByScore');
+const enableDragModeBtn = document.getElementById('enableDragMode');
+const addPreferenceBtn = document.getElementById('addPreferenceBtn');
+const addModal = document.getElementById('addModal');
 
-// Mouse takibi
-document.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    initializeApp();
+    setupEventListeners();
 });
 
-// Dinamik arka plan animasyonu
-function animateBackground(gradient) {
-  const body = document.body;
-  body.style.background = `linear-gradient(45deg, ${gradient.join(', ')})`;
-  body.style.backgroundSize = '400% 400%';
-  body.style.animation = 'gradientShift 8s ease infinite';
+function initializeApp() {
+    showLoading();
+    setupConnectionStatus();
+    loadPreferences();
 }
 
-// Gelişmiş parçacık sistemi
-class Particle {
-  constructor(x, y, type) {
-    this.x = x;
-    this.y = y;
-    this.vx = (Math.random() - 0.5) * 6;
-    this.vy = Math.random() * -4 - 2;
-    this.life = 1;
-    this.decay = Math.random() * 0.015 + 0.005;
-    this.type = type;
-    this.size = Math.random() * 12 + 6;
-    this.rotation = 0;
-    this.rotationSpeed = (Math.random() - 0.5) * 0.3;
-    this.gravity = 0.15;
-    this.bounce = 0.7;
-    this.groundY = window.innerHeight;
-  }
+function setupEventListeners() {
+    // Person selector
+    personButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentPerson = btn.dataset.person;
+            updatePersonSelector();
+            renderPreferences();
+        });
+    });
 
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    this.vy += this.gravity;
-    this.life -= this.decay;
-    this.rotation += this.rotationSpeed;
-    
-    // Yere çarpma
-    if (this.y > this.groundY - this.size) {
-      this.y = this.groundY - this.size;
-      this.vy *= -this.bounce;
-      this.vx *= 0.8;
-    }
-    
-    return this.life > 0;
-  }
+    // Form submission
+    preferenceForm.addEventListener('submit', handleAddPreference);
+    editForm.addEventListener('submit', handleEditPreference);
 
-  draw(ctx) {
-    ctx.save();
-    ctx.globalAlpha = this.life;
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.rotation);
-    
-    switch(this.type) {
-      case 'sparkles':
-        ctx.fillStyle = '#fff';
-        ctx.shadowColor = '#fff';
-        ctx.shadowBlur = 10;
-        ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
-        break;
-      case 'stars':
-        ctx.fillStyle = '#fffde7';
-        ctx.shadowColor = '#fffde7';
-        ctx.shadowBlur = 15;
-        ctx.beginPath();
-        for(let i = 0; i < 5; i++) {
-          ctx.lineTo(Math.cos((i * 2 * Math.PI) / 5) * this.size, 
-                     Math.sin((i * 2 * Math.PI) / 5) * this.size);
-          ctx.lineTo(Math.cos(((i * 2 + 1) * Math.PI) / 5) * this.size/2, 
-                     Math.sin(((i * 2 + 1) * Math.PI) / 5) * this.size/2);
+    // Filters
+    filterScoreType.addEventListener('change', renderPreferences);
+    filterPriority.addEventListener('change', renderPreferences);
+    clearFiltersBtn.addEventListener('click', clearFilters);
+
+    // Sorting and drag mode
+    sortByRankBtn.addEventListener('click', () => sortPreferences('rank'));
+    sortByScoreBtn.addEventListener('click', () => sortPreferences('score'));
+    enableDragModeBtn.addEventListener('click', toggleDragMode);
+
+    // Add preference modal
+    addPreferenceBtn.addEventListener('click', openAddModal);
+
+    // Modal close
+    window.addEventListener('click', (e) => {
+        if (e.target === editModal) {
+            closeEditModal();
         }
-        ctx.closePath();
-        ctx.fill();
-        break;
-      case 'hearts':
-        ctx.fillStyle = '#ff6b9d';
-        ctx.shadowColor = '#ff6b9d';
-        ctx.shadowBlur = 12;
-        ctx.font = `${this.size}px Arial`;
-        ctx.fillText('💖', -this.size/2, this.size/2);
-        break;
-      case 'sunbeams':
-        ctx.fillStyle = '#ffd60a';
-        ctx.shadowColor = '#ffd60a';
-        ctx.shadowBlur = 20;
-        ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
-        break;
-      case 'petals':
-        ctx.fillStyle = '#ffb3d9';
-        ctx.shadowColor = '#ffb3d9';
-        ctx.shadowBlur = 8;
-        ctx.fillText('🌸', -this.size/2, this.size/2);
-        break;
-    }
-    ctx.restore();
-  }
+        if (e.target === addModal) {
+            closeAddModal();
+        }
+    });
 }
 
-// Canvas oluştur
-const canvas = document.createElement('canvas');
-canvas.style.position = 'fixed';
-canvas.style.top = '0';
-canvas.style.left = '0';
-canvas.style.width = '100%';
-canvas.style.height = '100%';
-canvas.style.pointerEvents = 'none';
-canvas.style.zIndex = '1';
-const ctx = canvas.getContext('2d');
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-// Parçacık animasyonu
-function animateParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-  // Yeni parçacıklar ekle
-  if (Math.random() < 0.4) {
-    particles.push(new Particle(
-      Math.random() * canvas.width,
-      canvas.height + 10,
-      pages[currentPage].particles
-    ));
-  }
-  
-  // Parçacıkları güncelle ve çiz
-  particles = particles.filter(particle => {
-    if (particle.update()) {
-      particle.draw(ctx);
-      return true;
-    }
-    return false;
-  });
-  
-  requestAnimationFrame(animateParticles);
-}
-
-// 3D Çiçek oluştur - gerçek 3D efektler
-function create3DFlower(type, x, y) {
-  const flower = document.createElement('div');
-  flower.className = 'magical-flower';
-  flower.style.left = x + 'px';
-  flower.style.top = y + 'px';
-  
-  let svg = '';
-  const uniqueId = 'flower_' + Math.random().toString(36).substr(2, 9);
-  
-  switch(type) {
-    case 'magical_rose':
-      svg = `<svg viewBox='0 0 120 120' width='120' height='120'>
-        <defs>
-          <radialGradient id='roseGrad_${uniqueId}' cx='50%' cy='50%' r='50%'>
-            <stop offset='0%' stop-color='#ffb3b3'/>
-            <stop offset='50%' stop-color='#e63946'/>
-            <stop offset='100%' stop-color='#c62828'/>
-          </radialGradient>
-          <filter id='glow_${uniqueId}'>
-            <feGaussianBlur stdDeviation='6' result='coloredBlur'/>
-            <feMerge> 
-              <feMergeNode in='coloredBlur'/>
-              <feMergeNode in='SourceGraphic'/>
-            </feMerge>
-          </filter>
-        </defs>
-        <g filter='url(#glow_${uniqueId})'>
-          <ellipse cx='60' cy='60' rx='35' ry='40' fill='url(#roseGrad_${uniqueId})'/>
-          <ellipse cx='60' cy='55' rx='25' ry='30' fill='#ff6b6b'/>
-          <ellipse cx='60' cy='50' rx='18' ry='22' fill='#ff4757'/>
-          <circle cx='60' cy='45' r='12' fill='#fff' opacity='0.3'/>
-          <circle cx='60' cy='45' r='8' fill='#ffd700'/>
-          <ellipse cx='60' cy='95' rx='10' ry='25' fill='#388e3c'/>
-        </g>
-      </svg>`;
-      break;
-      
-    case 'cosmic_violet':
-      svg = `<svg viewBox='0 0 120 120' width='120' height='120'>
-        <defs>
-          <radialGradient id='violetGrad_${uniqueId}' cx='50%' cy='50%' r='50%'>
-            <stop offset='0%' stop-color='#e1bee7'/>
-            <stop offset='100%' stop-color='#8d5fd3'/>
-          </radialGradient>
-        </defs>
-        <ellipse cx='60' cy='55' rx='18' ry='30' fill='url(#violetGrad_${uniqueId})'/>
-        <ellipse cx='42' cy='50' rx='15' ry='22' fill='#b39ddb'/>
-        <ellipse cx='78' cy='50' rx='15' ry='22' fill='#9575cd'/>
-        <ellipse cx='60' cy='30' rx='12' ry='18' fill='#ce93d8'/>
-        <ellipse cx='48' cy='26' rx='10' ry='15' fill='#ba68c8'/>
-        <ellipse cx='72' cy='26' rx='10' ry='15' fill='#ab47bc'/>
-        <circle cx='60' cy='60' r='12' fill='#fffde7'/>
-        <circle cx='60' cy='60' r='8' fill='#ffd600'/>
-        <circle cx='60' cy='60' r='4' fill='#fff'/>
-      </svg>`;
-      break;
-      
-    case 'sunflower_dream':
-      svg = `<svg viewBox='0 0 120 120' width='120' height='120'>
-        <defs>
-          <radialGradient id='sunGrad_${uniqueId}' cx='50%' cy='50%' r='50%'>
-            <stop offset='0%' stop-color='#fff59d'/>
-            <stop offset='100%' stop-color='#ffd60a'/>
-          </radialGradient>
-        </defs>
-        <g>
-          <ellipse cx='60' cy='25' rx='7' ry='30' fill='#fff'/>
-          <ellipse cx='60' cy='95' rx='7' ry='30' fill='#fff'/>
-          <ellipse cx='25' cy='60' rx='30' ry='7' fill='#fff'/>
-          <ellipse cx='95' cy='60' rx='30' ry='7' fill='#fff'/>
-          <ellipse cx='36' cy='36' rx='7' ry='24' fill='#fff'/>
-          <ellipse cx='84' cy='36' rx='7' ry='24' fill='#fff'/>
-          <ellipse cx='36' cy='84' rx='7' ry='24' fill='#fff'/>
-          <ellipse cx='84' cy='84' rx='7' ry='24' fill='#fff'/>
-          <circle cx='60' cy='60' r='18' fill='url(#sunGrad_${uniqueId})' stroke='#e6b800' stroke-width='5'/>
-          <circle cx='60' cy='60' r='12' fill='#ffeb3b'/>
-          <circle cx='60' cy='60' r='6' fill='#fff'/>
-        </g>
-      </svg>`;
-      break;
-      
-    case 'cherry_blossom':
-      svg = `<svg viewBox='0 0 120 120' width='120' height='120'>
-        <defs>
-          <linearGradient id='cherryGrad_${uniqueId}' x1='0%' y1='0%' x2='100%' y2='100%'>
-            <stop offset='0%' stop-color='#ffb3d9'/>
-            <stop offset='100%' stop-color='#ff6f91'/>
-          </linearGradient>
-        </defs>
-        <path d='M60 100 Q48 70 48 35 Q60 12 72 35 Q72 70 60 100Z' fill='url(#cherryGrad_${uniqueId})'/>
-        <ellipse cx='60' cy='42' rx='15' ry='22' fill='#fff' opacity='0.2'/>
-        <ellipse cx='60' cy='36' rx='10' ry='15' fill='#fff' opacity='0.3'/>
-        <ellipse cx='60' cy='105' rx='12' ry='30' fill='#388e3c'/>
-        <circle cx='54' cy='30' r='4' fill='#fff' opacity='0.4'/>
-        <circle cx='66' cy='30' r='4' fill='#fff' opacity='0.4'/>
-      </svg>`;
-      break;
-  }
-  
-  flower.innerHTML = svg;
-  
-  // Mouse etkileşimi - gelişmiş
-  flower.addEventListener('click', () => {
-    if (!isAnimating) {
-      // Ses efekti
-      playSound(800, 0.3, 'sine');
-      
-      // Patlama animasyonu
-      flower.style.animation = 'flowerExplode 1s ease-out';
-      setTimeout(() => {
-        flower.style.animation = 'flowerFloat 6s ease-in-out infinite, flowerRotate 8s linear infinite, flower3D 4s ease-in-out infinite';
-      }, 1000);
-      
-      // Büyük patlama efekti
-      for (let i = 0; i < 25; i++) {
-        particles.push(new Particle(
-          x + 60,
-          y + 60,
-          pages[currentPage].particles
-        ));
-      }
-      
-      // Sürpriz mesaj
-      if (Math.random() < 0.3) {
-        showFlowerMessage(flower, x, y);
-      }
-    }
-  });
-  
-  // Mouse hover efekti
-  flower.addEventListener('mouseenter', () => {
-    flower.style.transform = 'scale(1.3) rotateY(15deg)';
-    playSound(600, 0.1, 'triangle');
-  });
-  
-  flower.addEventListener('mouseleave', () => {
-    flower.style.transform = 'scale(1) rotateY(0deg)';
-  });
-  
-  return flower;
-}
-
-// Sürpriz çiçek mesajları
-function showFlowerMessage(flower, x, y) {
-  const messages = [
-    'Seni seviyorum! 💖',
-    'Çok güzelsin! 🌸',
-    'Sen benim her şeyimsin! ✨',
-    'Seninle mutluyum! 🌹',
-    'Aşkım! 💕'
-  ];
-  
-  const msg = document.createElement('div');
-  msg.className = 'flower-bubble';
-  msg.textContent = messages[Math.floor(Math.random() * messages.length)];
-  msg.style.left = (x + 30) + 'px';
-  msg.style.top = (y - 40) + 'px';
-  
-  document.body.appendChild(msg);
-  
-  setTimeout(() => {
-    msg.remove();
-  }, 2000);
-}
-
-function renderPage(idx) {
-  app.innerHTML = '';
-  particles = [];
-  flowers = [];
-  
-  const page = pages[idx];
-  animateBackground(page.bgGradient);
-  
-  if (page.isFinal) {
-    // Hologram efekti ile final
-    const hologramContainer = document.createElement('div');
-    hologramContainer.className = 'hologram-container';
+// Firebase Functions
+function loadPreferences() {
+    const preferencesRef = database.ref('preferences');
     
-    const img = document.createElement('img');
-    img.alt = 'Sevgilim';
-    img.className = 'final-photo hologram';
+    preferencesRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            preferences = {
+                semih: data.semih || [],
+                sema: data.sema || []
+            };
+        } else {
+            // Boş tercih listesi (ilk kullanımda)
+            preferences = { semih: [], sema: [] };
+        }
+        hideLoading();
+        renderPreferences();
+    }, (error) => {
+        console.error('Error loading preferences:', error);
+        hideLoading();
+        showNotification('Veriler yüklenirken hata oluştu', 'error');
+        preferences = { semih: [], sema: [] };
+        renderPreferences();
+    });
+}
+
+function savePreferences() {
+    const preferencesRef = database.ref('preferences');
+    return preferencesRef.set(preferences);
+}
+
+function setupConnectionStatus() {
+    const connectedRef = database.ref('.info/connected');
+    connectedRef.on('value', (snap) => {
+        if (snap.val() === true) {
+            connectionStatus.innerHTML = '<i class="fas fa-circle"></i> Bağlı';
+            connectionStatus.className = 'status-indicator connected';
+        } else {
+            connectionStatus.innerHTML = '<i class="fas fa-circle"></i> Bağlantı Yok';
+            connectionStatus.className = 'status-indicator disconnected';
+        }
+    });
+}
+
+// UI Functions
+function updatePersonSelector() {
+    personButtons.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.person === currentPerson) {
+            btn.classList.add('active');
+        }
+    });
+}
+
+function renderPreferences() {
+    const currentPreferences = preferences[currentPerson];
+    const filteredPreferences = filterPreferences(currentPreferences);
     
-    // Fotoğrafı yükle
-    img.src = 'image.png';
+    preferencesList.innerHTML = '';
     
-    // Fotoğraf yükleme hatası için
-    img.onerror = function() {
-      console.log('PNG yüklenemedi, JPG deniyor...');
-      if (this.src.includes('.png')) {
-        this.src = 'image.jpg';
-      } else {
-        console.log('Fotoğraf yüklenemedi, placeholder gösteriliyor');
-        // Güzel bir placeholder SVG
-        this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2dyYWRpZW50KSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmI2YzE7c3RvcC1vcGFjaXR5OjEiIC8+CjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2ZmNjk5YjQ7c3RvcC1vcGFjaXR5OjEiIC8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPGNpcmNsZSBjeD0iMTAwIiBjeT0iODAiIHI9IjMwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjMiLz4KPGNpcmNsZSBjeD0iNzAiIGN5PSIxMDAiIHI9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjIiLz4KPGNpcmNsZSBjeD0iMTMwIiBjeT0iMTAwIiByPSIyMCIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC4yIi8+Cjx0ZXh0IHg9IjEwMCIgeT0iMTIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuKXhDwvdGV4dD4KPC9zdmc+';
-        this.alt = 'Sevgilim (Fotoğraf yüklenemedi)';
-      }
+    if (filteredPreferences.length === 0) {
+        preferencesList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-plus-circle" style="font-size: 3rem; color: rgba(255, 255, 255, 0.6); margin-bottom: 1rem;"></i>
+                <p style="color: rgba(255, 255, 255, 0.8); text-align: center; font-size: 1.1rem; margin-bottom: 0.5rem;">Henüz tercih eklenmemiş</p>
+                <p style="color: rgba(255, 255, 255, 0.6); text-align: center; font-size: 0.9rem;">"Yeni Tercih Ekle" butonuna tıklayarak ilk tercihinizi ekleyin</p>
+            </div>
+        `;
+        return;
+    }
+    
+    filteredPreferences.forEach(preference => {
+        const preferenceCard = createPreferenceCard(preference);
+        preferencesList.appendChild(preferenceCard);
+    });
+}
+
+function filterPreferences(preferences) {
+    let filtered = [...preferences];
+    
+    const scoreTypeFilter = filterScoreType.value;
+    const priorityFilter = filterPriority.value;
+    
+    if (scoreTypeFilter) {
+        filtered = filtered.filter(p => p.scoreType === scoreTypeFilter);
+    }
+    
+    if (priorityFilter !== '') {
+        const isPriority = priorityFilter === 'true';
+        filtered = filtered.filter(p => p.priority === isPriority);
+    }
+    
+    return filtered;
+}
+
+function clearFilters() {
+    filterScoreType.value = '';
+    filterPriority.value = '';
+    renderPreferences();
+}
+
+function createPreferenceCard(preference) {
+    const card = document.createElement('div');
+    card.className = `preference-card ${preference.priority ? 'priority' : ''}`;
+    card.style.borderLeftColor = preference.color || '#667eea';
+    card.dataset.id = preference.id;
+    
+    card.innerHTML = `
+        <div class="drag-handle" title="Sürüklemek için tutun">
+            <i class="fas fa-grip-vertical"></i>
+        </div>
+        <div class="preference-header">
+            <div class="preference-title">
+                <h3>${preference.university}</h3>
+                <p>${preference.department}</p>
+            </div>
+            <div class="preference-actions">
+                <button class="action-btn priority-btn ${preference.priority ? 'active' : ''}" 
+                        onclick="togglePriority('${preference.id}')" title="Öncelikli Tercih">
+                    <i class="fas fa-star"></i>
+                </button>
+                <button class="action-btn" onclick="editPreference('${preference.id}')" title="Düzenle">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn" onclick="deletePreference('${preference.id}')" title="Sil">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        <div class="preference-details">
+            <div class="detail-item">
+                <span class="detail-label">Puan</span>
+                <span class="detail-value">${preference.score}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Sıralama</span>
+                <span class="detail-value">${preference.rank.toLocaleString()}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Puan Türü</span>
+                <span class="score-type ${preference.scoreType}">${preference.scoreType}</span>
+            </div>
+        </div>
+        ${preference.notes ? `<div class="preference-notes">${preference.notes}</div>` : ''}
+    `;
+    
+    // Add drag and drop functionality
+    setupDragAndDrop(card, preference.id);
+    
+    return card;
+}
+
+// Form Handlers
+function handleAddPreference(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(preferenceForm);
+    const preference = {
+        id: generateId(),
+        university: formData.get('university'),
+        department: formData.get('department'),
+        score: parseFloat(formData.get('score')),
+        rank: parseInt(formData.get('rank')),
+        scoreType: formData.get('scoreType'),
+        color: formData.get('color'),
+        notes: formData.get('notes'),
+        priority: formData.get('priority') === 'on',
+        createdAt: Date.now()
     };
     
-    // Fotoğraf yüklendiğinde
-    img.onload = function() {
-      console.log('Fotoğraf başarıyla yüklendi!');
+    preferences[currentPerson].push(preference);
+    savePreferences().then(() => {
+        closeAddModal();
+        showNotification('Tercih başarıyla eklendi', 'success');
+    }).catch(error => {
+        console.error('Error saving preference:', error);
+        showNotification('Tercih eklenirken hata oluştu', 'error');
+    });
+}
+
+function handleEditPreference(e) {
+    e.preventDefault();
+    
+    if (!currentEditingId) return;
+    
+    const formData = new FormData(editForm);
+    const updatedPreference = {
+        university: formData.get('university'),
+        department: formData.get('department'),
+        score: parseFloat(formData.get('score')),
+        rank: parseInt(formData.get('rank')),
+        scoreType: formData.get('scoreType'),
+        color: formData.get('color'),
+        notes: formData.get('notes'),
+        priority: formData.get('priority') === 'on'
     };
     
-    app.appendChild(hologramContainer);
-    hologramContainer.appendChild(img);
+    const index = preferences[currentPerson].findIndex(p => p.id === currentEditingId);
+    if (index !== -1) {
+        preferences[currentPerson][index] = { ...preferences[currentPerson][index], ...updatedPreference };
+        savePreferences().then(() => {
+            closeEditModal();
+            showNotification('Tercih başarıyla güncellendi', 'success');
+        }).catch(error => {
+            console.error('Error updating preference:', error);
+            showNotification('Tercih güncellenirken hata oluştu', 'error');
+        });
+    }
+}
+
+// Action Functions
+function editPreference(id) {
+    const preference = preferences[currentPerson].find(p => p.id === id);
+    if (!preference) return;
     
-    const msg = document.createElement('div');
-    msg.className = 'flower-message final-message';
-    msg.innerHTML = page.message;
-    app.appendChild(msg);
+    currentEditingId = id;
     
-    // Özel final efektleri
+    // Fill form with current values
+    document.getElementById('editUniversity').value = preference.university;
+    document.getElementById('editDepartment').value = preference.department;
+    document.getElementById('editScore').value = preference.score;
+    document.getElementById('editRank').value = preference.rank;
+    document.getElementById('editScoreType').value = preference.scoreType;
+    document.getElementById('editColor').value = preference.color || '#4CAF50';
+    document.getElementById('editNotes').value = preference.notes || '';
+    document.getElementById('editPriority').checked = preference.priority;
+    
+    editModal.classList.remove('hidden');
+}
+
+function openAddModal() {
+    addModal.classList.remove('hidden');
+    preferenceForm.reset();
+    document.getElementById('color').value = '#4CAF50';
+}
+
+function closeAddModal() {
+    addModal.classList.add('hidden');
+    preferenceForm.reset();
+}
+
+function closeEditModal() {
+    editModal.classList.add('hidden');
+    currentEditingId = null;
+    editForm.reset();
+}
+
+function deletePreference(id) {
+    if (!confirm('Bu tercihi silmek istediğinizden emin misiniz?')) return;
+    
+    preferences[currentPerson] = preferences[currentPerson].filter(p => p.id !== id);
+    savePreferences().then(() => {
+        showNotification('Tercih başarıyla silindi', 'success');
+    }).catch(error => {
+        console.error('Error deleting preference:', error);
+        showNotification('Tercih silinirken hata oluştu', 'error');
+    });
+}
+
+function togglePriority(id) {
+    const index = preferences[currentPerson].findIndex(p => p.id === id);
+    if (index !== -1) {
+        preferences[currentPerson][index].priority = !preferences[currentPerson][index].priority;
+        savePreferences().then(() => {
+            showNotification('Öncelik durumu güncellendi', 'success');
+        }).catch(error => {
+            console.error('Error updating priority:', error);
+            showNotification('Öncelik güncellenirken hata oluştu', 'error');
+        });
+    }
+}
+
+// Utility Functions
+function generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+
+function showLoading() {
+    loading.classList.remove('hidden');
+}
+
+function hideLoading() {
+    loading.classList.add('hidden');
+}
+
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+        <span>${message}</span>
+    `;
+    
+    // Add styles
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#48bb78' : type === 'error' ? '#f56565' : '#4299e1'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 3000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
     setTimeout(() => {
-      playSound(440, 0.5, 'sine');
-      playSound(554, 0.5, 'sine');
-      playSound(659, 0.5, 'sine');
-    }, 1000);
+        notification.style.transform = 'translateX(0)';
+    }, 100);
     
-    nextBtn.style.display = 'none';
-    return;
-  }
-  
-  // Çiçekleri rastgele yerleştir
-  for (let i = 0; i < 12; i++) {
-    const x = Math.random() * (window.innerWidth - 120);
-    const y = Math.random() * (window.innerHeight - 300) + 150;
-    const flower = create3DFlower(page.flowerType, x, y);
-    flowers.push(flower);
-    app.appendChild(flower);
-  }
-  
-  const msg = document.createElement('div');
-  msg.className = 'flower-message';
-  msg.innerHTML = page.message;
-  app.appendChild(msg);
-  nextBtn.style.display = 'block';
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
 }
 
-nextBtn.addEventListener('click', () => {
-  if (currentPage < pages.length - 1) {
-    playSound(523, 0.2, 'square');
-    currentPage++;
-    renderPage(currentPage);
-  }
-});
-
-let touchStartX = null;
-window.addEventListener('touchstart', (e) => {
-  touchStartX = e.changedTouches[0].clientX;
-});
-window.addEventListener('touchend', (e) => {
-  if (touchStartX !== null) {
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    if (dx < -50 && currentPage < pages.length - 1) {
-      currentPage++;
-      renderPage(currentPage);
+// Drag and Drop Functions
+function setupDragAndDrop(card, preferenceId) {
+    const dragHandle = card.querySelector('.drag-handle');
+    
+    if (dragMode) {
+        card.classList.add('draggable');
+        dragHandle.style.display = 'block';
+    } else {
+        card.classList.remove('draggable');
+        dragHandle.style.display = 'none';
     }
-    touchStartX = null;
-  }
-});
+    
+    dragHandle.addEventListener('mousedown', (e) => {
+        if (!dragMode) return;
+        e.preventDefault();
+        startDrag(card, preferenceId);
+    });
+    
+    // Touch support for mobile devices
+    dragHandle.addEventListener('touchstart', (e) => {
+        if (!dragMode) return;
+        e.preventDefault();
+        startDrag(card, preferenceId);
+    });
+    
+    card.addEventListener('dragover', (e) => {
+        if (!dragMode || !draggedElement) return;
+        e.preventDefault();
+        card.classList.add('drag-over');
+    });
+    
+    card.addEventListener('dragleave', () => {
+        card.classList.remove('drag-over');
+    });
+    
+    card.addEventListener('drop', (e) => {
+        if (!dragMode || !draggedElement) return;
+        e.preventDefault();
+        card.classList.remove('drag-over');
+        const targetId = card.dataset.id;
+        if (targetId !== draggedElement.dataset.id) {
+            movePreference(draggedElement.dataset.id, targetId);
+        }
+    });
+}
 
-// Canvas'ı ekle ve animasyonu başlat
-document.body.appendChild(canvas);
-initAudio();
-animateParticles();
-renderPage(currentPage); 
+function startDrag(card, preferenceId) {
+    draggedElement = card;
+    draggedIndex = preferences[currentPerson].findIndex(p => p.id === preferenceId);
+    
+    card.classList.add('dragging');
+    card.querySelector('.drag-handle').classList.add('dragging');
+    
+    // Create ghost element
+    const ghost = card.cloneNode(true);
+    ghost.style.opacity = '0.5';
+    ghost.style.position = 'fixed';
+    ghost.style.pointerEvents = 'none';
+    ghost.style.zIndex = '10000';
+    document.body.appendChild(ghost);
+    
+    const moveGhost = (e) => {
+        const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+        const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+        
+        if (clientX && clientY) {
+            ghost.style.left = clientX - card.offsetWidth / 2 + 'px';
+            ghost.style.top = clientY - card.offsetHeight / 2 + 'px';
+        }
+    };
+    
+    const stopDrag = () => {
+        card.classList.remove('dragging');
+        card.querySelector('.drag-handle').classList.remove('dragging');
+        if (document.body.contains(ghost)) {
+            document.body.removeChild(ghost);
+        }
+        draggedElement = null;
+        draggedIndex = -1;
+        
+        document.removeEventListener('mousemove', moveGhost);
+        document.removeEventListener('mouseup', stopDrag);
+        document.removeEventListener('touchmove', moveGhost);
+        document.removeEventListener('touchend', stopDrag);
+    };
+    
+    document.addEventListener('mousemove', moveGhost);
+    document.addEventListener('mouseup', stopDrag);
+    document.addEventListener('touchmove', moveGhost, { passive: false });
+    document.addEventListener('touchend', stopDrag);
+}
+
+function movePreference(fromId, toId) {
+    const fromIndex = preferences[currentPerson].findIndex(p => p.id === fromId);
+    const toIndex = preferences[currentPerson].findIndex(p => p.id === toId);
+    
+    if (fromIndex === -1 || toIndex === -1) return;
+    
+    const [movedItem] = preferences[currentPerson].splice(fromIndex, 1);
+    preferences[currentPerson].splice(toIndex, 0, movedItem);
+    
+    savePreferences().then(() => {
+        renderPreferences();
+        showNotification('Tercih sırası güncellendi', 'success');
+    }).catch(error => {
+        console.error('Error moving preference:', error);
+        showNotification('Tercih taşınırken hata oluştu', 'error');
+    });
+}
+
+// Sorting Functions
+function sortPreferences(type) {
+    const currentPreferences = preferences[currentPerson];
+    
+    if (type === 'rank') {
+        currentPreferences.sort((a, b) => a.rank - b.rank);
+    } else if (type === 'score') {
+        currentPreferences.sort((a, b) => b.score - a.score);
+    }
+    
+    savePreferences().then(() => {
+        renderPreferences();
+        showNotification(`Tercihler ${type === 'rank' ? 'sıralamaya' : 'puana'} göre sıralandı`, 'success');
+    }).catch(error => {
+        console.error('Error sorting preferences:', error);
+        showNotification('Sıralama yapılırken hata oluştu', 'error');
+    });
+}
+
+function toggleDragMode() {
+    dragMode = !dragMode;
+    
+    if (dragMode) {
+        enableDragModeBtn.innerHTML = '<i class="fas fa-times"></i> Sürükle-Bırak Modunu Kapat';
+        enableDragModeBtn.classList.remove('btn-primary');
+        enableDragModeBtn.classList.add('btn-danger');
+        showNotification('Sürükle-bırak modu aktif', 'success');
+    } else {
+        enableDragModeBtn.innerHTML = '<i class="fas fa-grip-vertical"></i> Sürükle-Bırak Modu';
+        enableDragModeBtn.classList.remove('btn-danger');
+        enableDragModeBtn.classList.add('btn-primary');
+        showNotification('Sürükle-bırak modu kapatıldı', 'info');
+    }
+    
+    renderPreferences();
+}
+
+// Global functions for HTML onclick
+window.editPreference = editPreference;
+window.deletePreference = deletePreference;
+window.closeEditModal = closeEditModal;
+window.closeAddModal = closeAddModal;
+window.togglePriority = togglePriority; 

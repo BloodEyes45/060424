@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sonsuzluğa Doğru | Gizemli Yolculuk</title>
+    <title>Sonsuzluğa Doğru | Gizemli Macera</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', 'Segoe UI', sans-serif; }
         
@@ -19,39 +19,33 @@
             position: relative;
         }
 
-        /* Arka Plan Canvas */
         #bg-canvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none;
         }
 
         .container {
             position: relative;
             z-index: 10;
-            background: rgba(22, 27, 46, 0.75);
+            background: rgba(22, 27, 46, 0.85);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(244, 114, 182, 0.25);
+            border: 1px solid rgba(244, 114, 182, 0.3);
             border-radius: 24px;
-            padding: 35px 25px;
+            padding: 30px 20px;
             width: 100%;
             max-width: 480px;
-            box-shadow: 0 0 40px rgba(236, 72, 153, 0.15), 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 50px rgba(236, 72, 153, 0.2), 0 20px 25px -5px rgba(0, 0, 0, 0.6);
             text-align: center;
         }
 
-        /* İlerleme Çubuğu */
         .progress-container {
             width: 100%;
             background: rgba(255, 255, 255, 0.1);
             height: 8px;
             border-radius: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             overflow: hidden;
         }
         .progress-bar {
@@ -69,15 +63,15 @@
             border: 1px solid rgba(236, 72, 153, 0.4);
             color: #f472b6;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             letter-spacing: 1px;
         }
 
         h1 {
-            font-size: 1.6rem;
-            margin-bottom: 12px;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
             background: linear-gradient(135deg, #fff, #f472b6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -86,52 +80,95 @@
 
         p {
             color: #cbd5e1;
-            margin-bottom: 22px;
-            font-size: 0.95rem;
-            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.5;
         }
 
         .step { display: none; }
         .step.active { display: block; animation: fadeInUp 0.5s ease forwards; }
 
-        /* Şifre ve İpucu Kutusu */
         .cipher-box {
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(15, 23, 42, 0.85);
             border: 1px solid rgba(139, 92, 246, 0.4);
             border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 18px;
+            padding: 12px;
+            margin-bottom: 15px;
             text-align: center;
         }
         .cipher-code {
             font-family: 'Courier New', monospace;
             color: #38bdf8;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             word-break: break-all;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         .cipher-key {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #94a3b8;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 8px;
-            line-height: 1.4;
+            padding-top: 6px;
+            line-height: 1.3;
+        }
+
+        /* Wordle Izgara Stili */
+        .wordle-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        .wordle-row {
+            display: flex;
+            gap: 8px;
+        }
+        .wordle-cell {
+            width: 45px;
+            height: 45px;
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid #475569;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            text-transform: uppercase;
+        }
+        .wordle-cell.correct { background: #10b981; border-color: #34d399; }
+        .wordle-cell.present { background: #f59e0b; border-color: #fbbf24; }
+        .wordle-cell.absent { background: #334155; border-color: #334155; opacity: 0.6; }
+
+        .success-msg {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid #10b981;
+            color: #34d399;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            font-weight: 500;
+            display: none;
+            animation: fadeInUp 0.4s ease;
         }
 
         input[type="text"] {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: rgba(15, 23, 42, 0.7);
             border: 2px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
             color: #fff;
-            font-size: 1rem;
-            margin-bottom: 18px;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
             text-align: center;
             outline: none;
             transition: all 0.3s;
+            text-transform: uppercase;
         }
         input[type="text"]:focus {
             border-color: #ec4899;
@@ -142,8 +179,8 @@
             background: linear-gradient(135deg, #ec4899, #8b5cf6);
             color: white;
             border: none;
-            padding: 14px 28px;
-            font-size: 1rem;
+            padding: 12px 24px;
+            font-size: 0.95rem;
             font-weight: 600;
             border-radius: 12px;
             cursor: pointer;
@@ -153,7 +190,6 @@
         }
         button:active { transform: scale(0.98); }
 
-        /* Seçenek Butonları (Bulmaca 4 için) */
         .choice-btn {
             background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -165,7 +201,7 @@
             width: 100%;
             text-align: left;
             transition: 0.3s;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         .choice-btn:hover {
             border-color: #ec4899;
@@ -174,8 +210,8 @@
 
         .error {
             color: #f87171;
-            font-size: 0.85rem;
-            margin-top: 10px;
+            font-size: 0.8rem;
+            margin-top: 8px;
             display: none;
         }
 
@@ -236,19 +272,18 @@
             <div id="error-2" class="error">Işıkların şehri neresiydi? Tekrar düşün!</div>
         </div>
 
-        <!-- 3. BULMACA: SAYI ŞİFRESİ (SONSUZA DEK BİRLİKTE) -->
+        <!-- 3. BULMACA: SAYI ŞİFRESİ -->
         <div id="step-3" class="step">
             <span class="step-badge">AŞAMA 3 / 6</span>
             <h1>Gizli Sayı Kodu</h1>
-            <p>Aşağıdaki sayısal şifreyi alfabe anahtarını kullanarak çöz ve gizli cümleyi yaz.</p>
+            <p>Aşağıdaki şifreyi alfabe anahtarını kullanarak çöz ve gizli cümleyi yaz.</p>
             
             <div class="cipher-box">
                 <div class="cipher-code">
                     22-18-17-22-25-29-1 &nbsp; 5-6-14 &nbsp; 2-12-21-15-12-14-24-6
                 </div>
                 <div class="cipher-key">
-                    <b>İpucu Anahtarı (Türkçe Alfabe Sırası):</b><br>
-                    A=1, B=2, C=3, Ç=4, D=5, E=6, F=7, G=8, Ğ=9, H=10, I=11, İ=12, J=13, K=14, L=15, M=16, N=17, O=18, Ö=19, P=20, R=21, S=22, Ş=23, T=24, U=25, Ü=26, V=27, Y=28, Z=29
+                    <b>İpucu (Türkçe Alfabe):</b> A=1, B=2, C=3, Ç=4, D=5, E=6, F=7, G=8, Ğ=9, H=10, I=11, İ=12, J=13, K=14, L=15, M=16, N=17, O=18, Ö=19, P=20, R=21, S=22, Ş=23, T=24, U=25, Ü=26, V=27, Y=28, Z=29
                 </div>
             </div>
 
@@ -257,32 +292,41 @@
             <div id="error-3" class="error">Şifre henüz tam oturmadı, sayıları dikkatle eşleştir!</div>
         </div>
 
-        <!-- 4. BULMACA: YOL AYRIMI TESTİ -->
+        <!-- 4. BULMACA: WORDLE KELİME OYUNU -->
         <div id="step-4" class="step">
             <span class="step-badge">AŞAMA 4 / 6</span>
-            <h1>Kalbin Pusulası</h1>
-            <p>Aşk labirentinde bir yol ayrımındasın. Yağmurlu ve fırtınalı bir günde neyi seçersin?</p>
-            <button class="choice-btn" onclick="checkStep4(false)">Sıcak bir kahve alıp tek başıma oturmayı</button>
-            <button class="choice-btn" onclick="checkStep4(true)">Sana sımsıkı sarılıp fırtınayı dinlemeyi ❤️</button>
-            <button class="choice-btn" onclick="checkStep4(false)">Televizyon izlemeyi</button>
-            <div id="error-4" class="error">Doğru cevap kalbinin söylediği olmalı! 😉</div>
+            <h1>Kelime Bulmaca</h1>
+            <p>Birlikte olduğumuzda hissettiğimiz o en özel duygu nedir? (5 Harfli)</p>
+            
+            <div class="wordle-grid" id="wordle-grid">
+                <!-- Kutucuklar JavaScript ile dolacak -->
+            </div>
+
+            <div id="success-4" class="success-msg">
+                💖 Doğru bildin! Senin yanındayken çok huzur doluyorum...
+            </div>
+
+            <input type="text" id="input-4" maxlength="5" placeholder="5 harfli kelimeyi yaz..." autocomplete="off">
+            <button id="wordle-btn" onclick="checkWordle()">Tahmin Et</button>
+            <div id="error-4" class="error">Kelime 5 harfli olmalı veya yanlış! Tekrar dene.</div>
         </div>
 
-        <!-- 5. BULMACA: BİZİM HİKAYEMİZ - YEMEK -->
+        <!-- 5. BULMACA: YOL AYRIMI TESTİ -->
         <div id="step-5" class="step">
             <span class="step-badge">AŞAMA 5 / 6</span>
-            <h1>Ortak Lezzet</h1>
-            <p>Birlikte yemeyi en çok sevdiğimiz o yemek neydi?</p>
-            <input type="text" id="input-5" placeholder="En sevdiğimiz yemek..." autocomplete="off">
-            <button onclick="checkStep5()">Son Aşamaya Geç</button>
-            <div id="error-5" class="error">En lezzetli anımızı unutmuş olamazsın! :)</div>
+            <h1>Kalbin Pusulası</h1>
+            <p>Aşk labirentinde bir yol ayrımındasın. Yağmurlu ve fırtınalı bir günde neyi seçersin?</p>
+            <button class="choice-btn" onclick="checkStep5(false)">Sıcak bir kahve alıp tek başıma oturmayı</button>
+            <button class="choice-btn" onclick="checkStep5(true)">Sana sımsıkı sarılıp fırtınayı dinlemeyi ❤️</button>
+            <button class="choice-btn" onclick="checkStep5(false)">Televizyon izlemeyi</button>
+            <div id="error-5" class="error">Doğru cevap kalbinin söylediği olmalı! 😉</div>
         </div>
 
-        <!-- 6. BULMACA: BİZİM HİKAYEMİZ - İLK ÖPÜCÜK -->
+        <!-- 6. BULMACA: BİZİM HİKAYEMİZ -->
         <div id="step-6" class="step">
             <span class="step-badge">AŞAMA 6 / 6</span>
             <h1>Unutulmaz An</h1>
-            <p>Beni ilk öptüğün yer neresiydi?</p>
+            <p>Beni ilk öptüğün yer neresiydi? (Kısaca yazabilirsin)</p>
             <input type="text" id="input-6" placeholder="O özel mekan/yer..." autocomplete="off">
             <button onclick="checkStep6()">Macerayı Tamamla ✨</button>
             <div id="error-6" class="error">O büyülü anın gerçekleştiği yeri hatırla!</div>
@@ -290,11 +334,11 @@
 
         <!-- BÜYÜK FİNAL -->
         <div id="step-7" class="step">
-            <h1 style="font-size: 2rem; color: #f472b6;">🎉 TEBRİKLER SEVGİLİM!</h1>
+            <h1 style="font-size: 1.8rem; color: #f472b6;">🎉 TEBRİKLER SEVGİLİM!</h1>
             <p>Tüm bulmacaları ve engelleri sevginle aştın.</p>
             
             <div class="final-card">
-                <p style="font-size: 1.15rem; color: #fff; margin: 0; font-weight: 600;">
+                <p style="font-size: 1.1rem; color: #fff; margin: 0; font-weight: 600;">
                     🕵️‍♀️ Şimdi yanındaki <b>çantana (veya cüzdanına)</b> bir göz at bakalım...<br><br>
                     Seni orada gizemli bir <b>anahtar</b> bekliyor! 🔑✨
                 </p>
@@ -302,9 +346,8 @@
         </div>
     </div>
 
-    <!-- Canvas Confetti & Particle Script -->
     <script>
-        // 1. Arka Plan Parçacık Efekti (Kalp ve Yıldızlar)
+        // Arka Plan Parçacıkları (Kalpler)
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -317,15 +360,13 @@
         resizeCanvas();
 
         class Particle {
-            constructor() {
-                this.reset();
-            }
+            constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height + 10;
-                this.size = Math.random() * 12 + 6;
-                this.speedY = Math.random() * 1.5 + 0.5;
-                this.opacity = Math.random() * 0.6 + 0.2;
+                this.size = Math.random() * 10 + 5;
+                this.speedY = Math.random() * 1 + 0.3;
+                this.opacity = Math.random() * 0.5 + 0.2;
             }
             update() {
                 this.y -= this.speedY;
@@ -338,7 +379,7 @@
             }
         }
 
-        for (let i = 0; i < 30; i++) particles.push(new Particle());
+        for (let i = 0; i < 25; i++) particles.push(new Particle());
 
         function animateBg() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -347,7 +388,6 @@
         }
         animateBg();
 
-        // 2. Aşama Kontrolleri
         function updateProgress(step) {
             const percent = (step / 6) * 100;
             document.getElementById('progress-bar').style.width = percent + '%';
@@ -379,18 +419,77 @@
             let val = document.getElementById("input-3").value.trim().toUpperCase().replace(/\s+/g, '');
             if (val === "SONSUZADEKBİRLİKTE" || val === "SONSUZADEKBIRLIKTE") {
                 nextStep(3, 4);
+                initWordleBoard();
             } else { triggerError(3); }
         }
 
-        function checkStep4(isCorrect) {
-            if (isCorrect) {
-                nextStep(4, 5);
-            } else { triggerError(4); }
+        // Wordle (HUZUR) Mantığı
+        const targetWord = "HUZUR";
+        let currentRow = 0;
+        const maxRows = 4;
+
+        function initWordleBoard() {
+            const grid = document.getElementById("wordle-grid");
+            grid.innerHTML = "";
+            for (let r = 0; r < maxRows; r++) {
+                let row = document.createElement("div");
+                row.className = "wordle-row";
+                for (let c = 0; c < 5; c++) {
+                    let cell = document.createElement("div");
+                    cell.className = "wordle-cell";
+                    cell.id = `cell-${r}-${c}`;
+                    row.appendChild(cell);
+                }
+                grid.appendChild(row);
+            }
         }
 
-        function checkStep5() {
-            let val = document.getElementById("input-5").value.trim();
-            if (val.length >= 2) {
+        function checkWordle() {
+            let input = document.getElementById("input-4");
+            let val = input.value.trim().toUpperCase();
+            if (val.length !== 5) {
+                triggerError(4);
+                return;
+            }
+
+            // Hücreleri doldur
+            for (let c = 0; c < 5; c++) {
+                let cell = document.getElementById(`cell-${currentRow}-${c}`);
+                let char = val[c];
+                cell.innerText = char;
+
+                if (char === targetWord[c]) {
+                    cell.classList.add("correct");
+                } else if (targetWord.includes(char)) {
+                    cell.classList.add("present");
+                } else {
+                    cell.classList.add("absent");
+                }
+            }
+
+            if (val === targetWord) {
+                document.getElementById("input-4").style.display = "none";
+                document.getElementById("wordle-btn").style.display = "none";
+                document.getElementById("error-4").style.display = "none";
+                document.getElementById("success-4").style.display = "block";
+                
+                setTimeout(() => {
+                    nextStep(4, 5);
+                }, 2500);
+            } else {
+                currentRow++;
+                input.value = "";
+                if (currentRow >= maxRows) {
+                    // Hak biterse sıfırla ya da kolaylık olsun diye tekrar doldurt
+                    currentRow = 0;
+                    initWordleBoard();
+                }
+                triggerError(4);
+            }
+        }
+
+        function checkStep5(isCorrect) {
+            if (isCorrect) {
                 nextStep(5, 6);
             } else { triggerError(5); }
         }
@@ -410,7 +509,6 @@
             else document.querySelector('.progress-container').style.display = 'none';
         }
 
-        // 3. Konfeti Efekti (Final İçin)
         function startConfetti() {
             for (let i = 0; i < 70; i++) {
                 const conf = document.createElement('div');
